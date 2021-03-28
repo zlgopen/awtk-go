@@ -1,7 +1,7 @@
 package awtk
 
 /*
-#cgo CFLAGS: -DWITH_FS_RES=1 -DAWTK_GO=1
+#cgo CFLAGS: -DWITH_FS_RES=1 -DAWTK_GO=1 -DHAS_STDIO=1
 #cgo CFLAGS: -I../../awtk/src
 #cgo CFLAGS: -I../../awtk/3rd
 #cgo CFLAGS: -I../../awtk/src/ext_widgets
