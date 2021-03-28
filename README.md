@@ -53,6 +53,12 @@ cp ../awtk/bin/awtk.dll bin
 
 ## 运行
 
+> Linux set LD\_LIBRARY\_PATH to bin
+
+```
+export LD_LIBRARY_PATH=bin
+```
+
 ```
 go run demos/button.go
 ```
