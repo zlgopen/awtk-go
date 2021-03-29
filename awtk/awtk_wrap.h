@@ -1,6 +1,5 @@
 #include "awtk.h"
 
-extern int GoOnTimer(void* ctx);
 extern int GoOnEvent(void* ctx, void* e);
 extern int GoReleasePointer(void* ctx);
 
@@ -26,6 +25,8 @@ static uint32_t wrap_widget_on(widget_t* widget, uint32_t etype, void* ctx) {
   return ret;
 }
 
+////////////////////emitter//////////////////////////////////////
+
 static uint32_t wrap_emitter_on(emitter_t* emitter, uint32_t etype, void* ctx) {
   uint32_t ret = emitter_on(emitter, etype, (event_func_t)wrap_on_event, ctx);
   if (ret == TK_INVALID_ID) {
@@ -36,6 +37,9 @@ static uint32_t wrap_emitter_on(emitter_t* emitter, uint32_t etype, void* ctx) {
 
   return ret;
 }
+
+////////////////////timer//////////////////////////////////////
+extern int GoOnTimer(void* ctx);
 
 static ret_t timer_info_on_destroy(void *data) {
   timer_info_t *item = (timer_info_t *)data;
@@ -53,6 +57,30 @@ static uint32_t wrap_add_timer(void* ctx, uint32_t duration) {
     GoReleasePointer(ctx);
   } else {
     timer_set_on_destroy(ret, timer_info_on_destroy, NULL); 
+  }
+
+  return ret;
+}
+
+////////////////////idle//////////////////////////////////////
+extern int GoOnIdle(void* ctx);
+
+static ret_t idle_info_on_destroy(void *data) {
+  idle_info_t *item = (idle_info_t *)data;
+  GoReleasePointer(item->ctx);
+  return RET_OK;
+}
+
+static ret_t wrap_on_idle(const idle_info_t* info) {
+  return (ret_t)GoOnIdle(info->ctx);
+}
+
+static uint32_t wrap_add_idle(void* ctx) {
+  uint32_t ret = idle_add(wrap_on_idle, ctx);
+  if(ret == TK_INVALID_ID) {
+    GoReleasePointer(ctx);
+  } else {
+    idle_set_on_destroy(ret, idle_info_on_destroy, NULL); 
   }
 
   return ret;

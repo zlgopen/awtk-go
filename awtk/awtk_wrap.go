@@ -9,9 +9,12 @@ package awtk
 #include "./awtk_wrap.h"
 */
 import "C"
-import "fmt"
-import "unsafe"
-import gopointer "github.com/mattn/go-pointer"
+import (
+	"fmt"
+	"unsafe"
+
+	gopointer "github.com/mattn/go-pointer"
+)
 
 type OnEventFunc func(ctx interface{}, e TEvent) TRet
 
@@ -58,8 +61,7 @@ func (this TEmitter) On(eventType uint32, onEvent OnEventFunc, ctx interface{}) 
 	return uint32(id)
 }
 
-//////////////////////////////////////////////////
-
+/////////////////////timer/////////////////////////////
 type OnTimerFunc func(ctx interface{}) TRet
 
 type OnTimerInfo struct {
@@ -70,7 +72,7 @@ type OnTimerInfo struct {
 //export GoOnTimer
 func GoOnTimer(ctx unsafe.Pointer) C.int {
 	info := gopointer.Restore(ctx).(OnTimerInfo)
-	ret := info.onTimer(info.ctx);
+	ret := info.onTimer(info.ctx)
 	fmt.Println("GoOnTimer", info, ret)
 
 	return C.int(ret)
@@ -80,7 +82,33 @@ func AddTimer(onTimer OnTimerFunc, ctx interface{}, duration uint32) uint32 {
 	c := OnTimerInfo{onTimer: onTimer, ctx: ctx}
 	p := gopointer.Save(c)
 
-	id := C.wrap_add_timer(p, C.uint32_t(duration));
+	id := C.wrap_add_timer(p, C.uint32_t(duration))
+
+	return uint32(id)
+}
+
+/////////////////////idle/////////////////////////////
+type OnIdleFunc func(ctx interface{}) TRet
+
+type OnIdleInfo struct {
+	onIdle OnIdleFunc
+	ctx    interface{}
+}
+
+//export GoOnIdle
+func GoOnIdle(ctx unsafe.Pointer) C.int {
+	info := gopointer.Restore(ctx).(OnIdleInfo)
+	ret := info.onIdle(info.ctx)
+	fmt.Println("GoOnIdle", info, ret)
+
+	return C.int(ret)
+}
+
+func AddIdle(onIdle OnIdleFunc, ctx interface{}) uint32 {
+	c := OnIdleInfo{onIdle: onIdle, ctx: ctx}
+	p := gopointer.Save(c)
+
+	id := C.wrap_add_idle(p)
 
 	return uint32(id)
 }
