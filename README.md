@@ -44,14 +44,20 @@ mkdir bin
 cp ../awtk/bin/libawtk.* bin
 ```
 
-* Windows 平台将动态库拷贝到 bin 目录下
+* Windows 平台将动态库拷贝到当前目录下
 
 ```
 mkdir bin
-cp ../awtk/bin/awtk.dll bin
+cp ../awtk/bin/awtk.dll .
 ```
 
 ## 运行
+
+> 在 Linux 下需要设置 LD\_LIBRARY\_PATH 
+
+```
+export LD_LIBRARY_PATH=bin
+```
 
 ```
 go run demos/button.go
