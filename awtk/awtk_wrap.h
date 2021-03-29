@@ -62,6 +62,23 @@ static uint32_t wrap_add_timer(void* ctx, uint32_t duration) {
   return ret;
 }
 
+////////////////////widget_add_timer//////////////////////////////////////
+static uint32_t wrap_widget_add_timer(widget_t* widget, void* ctx, uint32_t duration) {
+  uint32_t ret = widget_add_timer(widget, wrap_on_timer, duration); 
+  if (ret == TK_INVALID_ID) {
+    GoReleasePointer(ctx);
+  } else {
+    timer_info_t* info = (timer_info_t*)timer_find(ret);
+    if(info != NULL) {
+      info->ctx = ctx;
+    }
+    timer_set_on_destroy(ret, timer_info_on_destroy, NULL); 
+  }
+
+  return ret;
+}
+
+
 ////////////////////idle//////////////////////////////////////
 extern int GoOnIdle(void* ctx);
 
@@ -86,3 +103,18 @@ static uint32_t wrap_add_idle(void* ctx) {
   return ret;
 }
 
+////////////////////widget_add_idle//////////////////////////////////////
+static uint32_t wrap_widget_add_idle(widget_t* widget, void* ctx) {
+  uint32_t ret = widget_add_idle(widget, wrap_on_idle); 
+  if (ret == TK_INVALID_ID) {
+    GoReleasePointer(ctx);
+  } else {
+    idle_info_t* info = (idle_info_t*)idle_find(ret);
+    if(info != NULL) {
+      info->ctx = ctx;
+    }
+    idle_set_on_destroy(ret, idle_info_on_destroy, NULL); 
+  }
+
+  return ret;
+}

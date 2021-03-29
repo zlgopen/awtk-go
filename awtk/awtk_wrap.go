@@ -52,6 +52,24 @@ func (this TWidget) On(eventType uint32, onEvent OnEventFunc, ctx interface{}) u
 	return uint32(id)
 }
 
+func (this TWidget) AddTimer(onTimer OnTimerFunc, ctx interface{}, duration uint32) uint32 {
+	c := OnTimerInfo{onTimer: onTimer, ctx: ctx}
+	p := gopointer.Save(c)
+
+	id := C.wrap_widget_add_timer((*C.widget_t)(this.handle), p, C.uint32_t(duration))
+
+	return uint32(id)
+}
+
+func (this TWidget) AddIdle(onIdle OnIdleFunc, ctx interface{}) uint32 {
+	c := OnIdleInfo{onIdle: onIdle, ctx: ctx}
+	p := gopointer.Save(c)
+
+	id := C.wrap_widget_add_idle((*C.widget_t)(this.handle), p)
+
+	return uint32(id)
+}
+
 func (this TEmitter) On(eventType uint32, onEvent OnEventFunc, ctx interface{}) uint32 {
 	c := OnEventInfo{onEvent: onEvent, ctx: ctx}
 	p := gopointer.Save(c)

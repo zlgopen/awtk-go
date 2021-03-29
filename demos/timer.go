@@ -30,6 +30,16 @@ func appInit() {
 	quit.SetPropStr(awtk.WIDGET_PROP_TEXT, "Quit")
 	quit.SetSelfLayout("default(x=c,y=m:60,w=80,h=40)")
 	quit.SetPropStr("on:click", "quit()")
+
+	label.AddTimer(func (ctx interface{}) awtk.TRet {
+	  fmt.Println("Widget Timer Repeat")
+	  return awtk.RET_REPEAT
+	}, label, 1000);
+
+	label.AddTimer(func (ctx interface{}) awtk.TRet {
+	  fmt.Println("Widget Timer Once")
+	  return awtk.RET_REMOVE
+	}, label, 1000);
 }
 
 func main() {
