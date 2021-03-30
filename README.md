@@ -31,6 +31,12 @@ python ./scripts/update_res.py all
 
 * 编译 PC 版本
 
+> 修改环境变量 (MacOS/Linux/Windows(bash) 下修改 env.sh)，将 AWTK_ROOT 指向 awtk 的根目录，并使其生效。
+
+```
+source env.sh
+```
+
 ```
 cd awtk 
 go build
