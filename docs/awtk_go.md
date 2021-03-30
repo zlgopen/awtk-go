@@ -68,7 +68,7 @@ AWTK 中部分属性使用了位域。如：
 bool_t widget_get_visible(widget_t* widget);
 ```
 
-## 2. 不支持访问 union 的成员。
+## 2. Go 语言不支持访问 C 语言 union 的成员。
 
 方案：提供相应的 get 函数，代替直接访问成员。如：
 
@@ -110,7 +110,7 @@ typedef union _color_t {
 uint32_t color_get_color(color_t* c);
 ```
 
-## 3. 不支持可变参数。
+## 3. Go 不支持调用C语言中可变参数的函数。
 
 AWTK 中的 widget_set_visible 由于历史原因弄成了可变参数。
 
@@ -210,4 +210,4 @@ static uint32_t wrap_add_timer(void* ctx, uint32_t duration) {
 
 ## 总结
 
-整个支持 Go 语言绑定过程还是很顺利也很有趣的。刚开始接触 Go 语言，初步感觉 Go 语言是很好用的，和 C 语言结合和很方便。
+整个支持 Go 语言绑定过程还是很顺利也很有趣的。刚开始接触 Go 语言，初步感觉 Go 语言是很好用的，和 C 语言结合很方便。
