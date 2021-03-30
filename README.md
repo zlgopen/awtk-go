@@ -77,4 +77,6 @@ go run demos/button.go
 
 * [AWTK 脚本绑定原理](https://github.com/zlgopen/awtk/blob/master/docs/script_binding.md)
 
+* [AWTK Go 语言绑定笔记](docs/awtk_go.md)
+
 > 本文以 Linux/MacOS 为例，Windows 可能会微妙差异，请酌情处理。
