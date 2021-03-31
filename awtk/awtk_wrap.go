@@ -38,7 +38,7 @@ func GoOnEvent(ctx unsafe.Pointer, e unsafe.Pointer) C.int {
 	return C.int(C.RET_OK)
 }
 
-func (this TWidget) On(eventType uint32, onEvent OnEventFunc, ctx interface{}) uint32 {
+func (this TWidget) On(eventType TEventType, onEvent OnEventFunc, ctx interface{}) uint32 {
 	c := OnEventInfo{onEvent: onEvent, ctx: ctx}
 	p := gopointer.Save(c)
 
@@ -65,7 +65,7 @@ func (this TWidget) AddIdle(onIdle OnIdleFunc, ctx interface{}) uint32 {
 	return uint32(id)
 }
 
-func (this TEmitter) On(eventType uint32, onEvent OnEventFunc, ctx interface{}) uint32 {
+func (this TEmitter) On(eventType TEventType, onEvent OnEventFunc, ctx interface{}) uint32 {
 	c := OnEventInfo{onEvent: onEvent, ctx: ctx}
 	p := gopointer.Save(c)
 
@@ -125,3 +125,5 @@ func AddIdle(onIdle OnIdleFunc, ctx interface{}) uint32 {
 
 	return uint32(id)
 }
+
+const TK_INVALID_ID uint32 = C.TK_INVALID_ID

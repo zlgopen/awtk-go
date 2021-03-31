@@ -32,10 +32,10 @@ func appInit() {
 	quit.SetSelfLayout("default(x=c,y=m:60,w=80,h=40)")
 	quit.SetPropStr("on:click", "quit()")
 
-	label.AddIdle(func (ctx interface{}) awtk.TRet {
-	  fmt.Println("Widget Idle Repeat")
-	  return awtk.RET_REPEAT
-	}, label);
+	label.AddIdle(func(ctx interface{}) awtk.TRet {
+		fmt.Println("Widget Idle Repeat")
+		return awtk.RET_REPEAT
+	}, label)
 }
 
 func main() {

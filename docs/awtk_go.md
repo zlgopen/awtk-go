@@ -110,7 +110,7 @@ typedef union _color_t {
 uint32_t color_get_color(color_t* c);
 ```
 
-## 3. Go 不支持调用C语言中可变参数的函数。
+## 3. Go 不支持调用 C 语言中可变参数的函数。
 
 AWTK 中的 widget_set_visible 由于历史原因弄成了可变参数。
 
@@ -154,7 +154,7 @@ int event_get_type(event_t* event);
 
 ## 5. 不支持将 Go 的函数转换成 C 的函数指针。
 
-方案：将函数和函数的上下文合并成一个对象，转递给 C 语言，由 C 语言的函数反过来调用。
+方案：将函数和函数的上下文合并成一个对象，转递给 C 语言，由 C 语言的函数反过来调用 Go 的包装函数。
 
 ```go
 type OnTimerFunc func(ctx interface{}) TRet
@@ -206,6 +206,49 @@ static uint32_t wrap_add_timer(void* ctx, uint32_t duration) {
 
   return ret;
 }
+```
+
+## 6. 枚举类型的处理
+
+最早枚举类型直接当作 int 类型处理。
+
+```go
+type TRet int
+
+const (
+	RET_OK              = C.RET_OK
+	RET_OOM             = C.RET_OOM
+	RET_FAIL            = C.RET_FAIL
+	RET_NOT_IMPL        = C.RET_NOT_IMP
+)
+```
+
+但是单元测试会失败：
+
+```
+assert.Equal(t, win.SetText("Hello"), RET_OK)
+```
+
+```go
+    awtk_test.go:17: 
+        	Error Trace:	awtk_test.go:17
+        	Error:      	Not equal: 
+        	            	expected: awtk.TRet(0)
+        	            	actual  : int(0)
+        	Test:       	TestSetGet
+```
+
+于是在常量前面增加一个类型。一切正常了：
+
+```go
+type TRet int
+
+const (
+	RET_OK             TRet = C.RET_OK
+	RET_OOM            TRet = C.RET_OOM
+	RET_FAIL           TRet = C.RET_FAIL
+	RET_NOT_IMPL       TRet = C.RET_NOT_IMP
+)
 ```
 
 ## 总结
