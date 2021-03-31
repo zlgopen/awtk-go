@@ -1,5 +1,5 @@
-#macos 
-export AWTK_ROOT=/Users/jim/work/awtk-root/awtk
+#Linux
+export AWTK_ROOT=${PWD}/../awtk
 
 #windows bash
 #export AWTK_ROOT=d:/work/awtk-root/awtk
