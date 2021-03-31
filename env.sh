@@ -1,4 +1,8 @@
+#macos 
 export AWTK_ROOT=/Users/jim/work/awtk-root/awtk
+
+#windows bash
+#export AWTK_ROOT=d:/work/awtk-root/awtk
 
 export PATH=${PATH}:${AWTK_ROOT}/bin
 export LD_LIBRARY_PATH=${AWTK_ROOT}/bin
