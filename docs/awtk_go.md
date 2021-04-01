@@ -1,6 +1,6 @@
 # Go 语言绑定笔记
 
-理论上 AWTK 本身脚本化是非常简单的事情，AWTK 已经支持 jerryscript、nodejs、quickjs、lua、python、java、minijvm 和 cpp 等语言的绑定。不过每种语言都有自己的特性，所以每次增加新的语言，也是对 AWTK 绑定机制的考验和完善。
+理论上 [AWTK](https://github.com/zlgopen/awtk) [AWTK](https://github.com/zlgopen/awtk) 已经支持 jerryscript、nodejs、quickjs、lua、python、java、minijvm 和 cpp 等语言的绑定。不过每种语言都有自己的特性，所以每次增加新的语言，也是对 [AWTK](https://github.com/zlgopen/awtk) 绑定机制的考验和完善。
 
 这次实现 Go 语言绑定大概花了两天时间。一天时间用来写代码生成器，一天时间用来写 scriptable 为 custom 的函数和示例代码。Go 语言调用 C 语言的函数有些特殊的要求，所以对 AWTK 的部分 API 做来一些扩展或改进：
 

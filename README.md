@@ -1,6 +1,6 @@
 # awtk-go
 
-ZLG 开源 GUI 引擎 [awtk](https://github.com/zlgopen/awtk) 针对 [GO 语言](https://golang.org/) 的绑定。
+ZLG 开源 GUI 引擎 [AWTK](https://github.com/zlgopen/awtk) 针对 [GO 语言](https://golang.org/) 的绑定。
 
 > 目前处于实验阶段。
 
@@ -43,27 +43,14 @@ go build
 cd -
 ```
 
-* Linux/MacOS 平台将动态库拷贝到 bin 目录下
+* MacOS 平台将动态库拷贝到 bin 目录下
 
 ```
 mkdir bin
 cp ../awtk/bin/libawtk.* bin
 ```
 
-* Windows 平台将动态库拷贝到当前目录下
-
-```
-mkdir bin
-cp ../awtk/bin/awtk.dll .
-```
-
 ## 运行
-
-> 在 Linux 下需要设置 LD\_LIBRARY\_PATH 
-
-```
-export LD_LIBRARY_PATH=bin
-```
 
 ```
 go run demos/button.go
