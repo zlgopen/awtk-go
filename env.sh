@@ -1,4 +1,4 @@
-#Linux
+#Linux/MasOS
 export AWTK_ROOT=${PWD}/../awtk
 
 #windows bash
@@ -12,3 +12,6 @@ export CGO_CFLAGS="${CGO_CFLAGS} -I ${AWTK_ROOT}/src"
 export CGO_CFLAGS="${CGO_CFLAGS} -I ${AWTK_ROOT}/3rd"
 export CGO_CFLAGS="${CGO_CFLAGS} -I ${AWTK_ROOT}/src/ext_widgets"
 export CGO_LDFLAGS="-L ${AWTK_ROOT}/bin -lawtk"
+
+#for window mingw, uncomment this following line
+#export CGO_CFLAGS="${CGO_CFLAGS} -DMINGW=1"

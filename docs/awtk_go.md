@@ -251,6 +251,20 @@ const (
 )
 ```
 
+## 7. cgo 的坑
+
+ * import "C" 之前不能有空行
+
+ ```c
+ /*
+#include <awtk.h>
+#include <tkc/rlog.h>
+#include <conf_io/app_conf.h>
+#include "../res/assets.inc"
+*/
+import "C"
+```
+
 ## 总结
 
 整个支持 Go 语言绑定过程还是很顺利也很有趣的。刚开始接触 Go 语言，初步感觉 Go 语言是很好用的，和 C 语言结合很方便。
