@@ -7,6 +7,13 @@ import (
 	"github.com/zlgopen/awtk-go/awtk"
 )
 
+func workFunc() {
+  awtk.QueueIdle(func (ctx interface{}) awtk.TRet {
+    fmt.Println("------------------QueueIdle-----------------");
+    return awtk.RET_REMOVE;
+  }, nil);
+}
+
 func onIdle(ctx interface{}) awtk.TRet {
 	label := ctx.(awtk.TWidget)
 	text := label.GetText()
@@ -36,6 +43,8 @@ func appInit() {
 		fmt.Println("Widget Idle Repeat")
 		return awtk.RET_REPEAT
 	}, label)
+	
+	go workFunc();
 }
 
 func main() {

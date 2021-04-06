@@ -100,6 +100,14 @@ func AddTimer(onTimer OnTimerFunc, ctx interface{}, duration uint32) uint32 {
 	return uint32(id)
 }
 
+func QueueTimer(onTimer OnTimerFunc, ctx interface{}, duration uint32) TRet {
+	c := OnTimerInfo{onTimer: onTimer, ctx: ctx}
+	p := gopointer.Save(c)
+
+	return TRet(C.wrap_queue_timer(p, C.uint32_t(duration)));
+}
+
+
 /////////////////////idle/////////////////////////////
 type OnIdleFunc func(ctx interface{}) TRet
 
@@ -124,6 +132,13 @@ func AddIdle(onIdle OnIdleFunc, ctx interface{}) uint32 {
 	id := C.wrap_add_idle(p)
 
 	return uint32(id)
+}
+
+func QueueIdle(onIdle OnIdleFunc, ctx interface{}) TRet {
+	c := OnIdleInfo{onIdle: onIdle, ctx: ctx}
+	p := gopointer.Save(c)
+
+	return TRet(C.wrap_queue_idle(p));
 }
 
 const TK_INVALID_ID uint32 = C.TK_INVALID_ID

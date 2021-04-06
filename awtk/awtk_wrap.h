@@ -62,6 +62,10 @@ static uint32_t wrap_add_timer(void* ctx, uint32_t duration) {
   return ret;
 }
 
+static ret_t wrap_queue_timer(void* ctx, uint32_t duration) {
+  return timer_queue_ex(wrap_on_timer, ctx, duration, timer_info_on_destroy, NULL);
+}
+
 ////////////////////widget_add_timer//////////////////////////////////////
 static uint32_t wrap_widget_add_timer(widget_t* widget, void* ctx, uint32_t duration) {
   uint32_t ret = widget_add_timer(widget, wrap_on_timer, duration); 
@@ -101,6 +105,10 @@ static uint32_t wrap_add_idle(void* ctx) {
   }
 
   return ret;
+}
+
+static ret_t wrap_queue_idle(void* ctx) {
+  return idle_queue_ex(wrap_on_idle, ctx, idle_info_on_destroy, NULL);
 }
 
 ////////////////////widget_add_idle//////////////////////////////////////

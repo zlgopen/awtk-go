@@ -7,6 +7,13 @@ import (
 	"github.com/zlgopen/awtk-go/awtk"
 )
 
+func workFunc() {
+  awtk.QueueTimer(func (ctx interface{}) awtk.TRet {
+    fmt.Println("------------------QueueTimer-----------------");
+    return awtk.RET_REMOVE;
+  }, nil, 3000);
+}
+
 func onTimer(ctx interface{}) awtk.TRet {
 	label := ctx.(awtk.TWidget)
 	text := label.GetText()
@@ -40,6 +47,8 @@ func appInit() {
 		fmt.Println("Widget Timer Once")
 		return awtk.RET_REMOVE
 	}, label, 1000)
+
+	go workFunc();
 }
 
 func main() {
