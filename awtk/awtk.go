@@ -1436,6 +1436,18 @@ func (this TEdit) SetCursor(cursor uint32) TRet {
   return TRet(C.edit_set_cursor((*C.widget_t)(this.handle), (C.uint32_t)(cursor)));
 }
 
+func (this TEdit) GetCursor() TRet {
+  return TRet(C.edit_get_cursor((*C.widget_t)(this.handle)));
+}
+
+func (this TEdit) SetSelect(start uint32, end uint32) TRet {
+  return TRet(C.edit_set_select((*C.widget_t)(this.handle), (C.uint32_t)(start), (C.uint32_t)(end)));
+}
+
+func (this TEdit) GetSelectedText() string {
+  return C.GoString(C.edit_get_selected_text((*C.widget_t)(this.handle)));
+}
+
 func (this TEdit) GetTips() string {
   return C.GoString((*C.edit_t)(unsafe.Pointer(this.handle)).tips);
 }
@@ -1716,6 +1728,12 @@ func (this TFileBrowserView) SetInitDir(init_dir string) TRet {
   return TRet(C.file_browser_view_set_init_dir((*C.widget_t)(this.handle), ainit_dir));
 }
 
+func (this TFileBrowserView) SetTopDir(top_dir string) TRet {
+  atop_dir := C.CString(top_dir)
+  defer C.free(unsafe.Pointer(atop_dir))
+  return TRet(C.file_browser_view_set_top_dir((*C.widget_t)(this.handle), atop_dir));
+}
+
 func (this TFileBrowserView) SetFilter(filter string) TRet {
   afilter := C.CString(filter)
   defer C.free(unsafe.Pointer(afilter))
@@ -1766,6 +1784,10 @@ func (this TFileBrowserView) GetInitDir() string {
   return C.GoString((*C.file_browser_view_t)(unsafe.Pointer(this.handle)).init_dir);
 }
 
+func (this TFileBrowserView) GetTopDir() string {
+  return C.GoString((*C.file_browser_view_t)(unsafe.Pointer(this.handle)).top_dir);
+}
+
 func (this TFileBrowserView) GetFilter() string {
   return C.GoString((*C.file_browser_view_t)(unsafe.Pointer(this.handle)).filter);
 }
@@ -1800,6 +1822,12 @@ func (this TFileChooser) SetInitDir(init_dir string) TRet {
   ainit_dir := C.CString(init_dir)
   defer C.free(unsafe.Pointer(ainit_dir))
   return TRet(C.file_chooser_set_init_dir((*C.file_chooser_t)(this.handle), ainit_dir));
+}
+
+func (this TFileChooser) SetTopDir(top_dir string) TRet {
+  atop_dir := C.CString(top_dir)
+  defer C.free(unsafe.Pointer(atop_dir))
+  return TRet(C.file_chooser_set_top_dir((*C.file_chooser_t)(this.handle), atop_dir));
 }
 
 func (this TFileChooser) SetFilter(filter string) TRet {
@@ -2809,6 +2837,10 @@ func (this TLabel) SetLength(length int32) TRet {
   return TRet(C.label_set_length((*C.widget_t)(this.handle), (C.int32_t)(length)));
 }
 
+func (this TLabel) SetMaxW(max_w int32) TRet {
+  return TRet(C.label_set_max_w((*C.widget_t)(this.handle), (C.int32_t)(max_w)));
+}
+
 func (this TLabel) SetLineWrap(line_wrap bool) TRet {
   return TRet(C.label_set_line_wrap((*C.widget_t)(this.handle), (C.bool_t)(line_wrap)));
 }
@@ -2837,6 +2869,10 @@ func (this TLabel) GetLineWrap() bool {
 
 func (this TLabel) GetWordWrap() bool {
   return (bool)((*C.label_t)(unsafe.Pointer(this.handle)).word_wrap);
+}
+
+func (this TLabel) GetMaxW() int32 {
+  return (int32)((*C.label_t)(unsafe.Pointer(this.handle)).max_w);
 }
 
 type TLangIndicator struct {
@@ -2979,8 +3015,8 @@ func (this TListViewH) SetItemWidth(item_width int32) TRet {
   return TRet(C.list_view_h_set_item_width((*C.widget_t)(this.handle), (C.int32_t)(item_width)));
 }
 
-func (this TListViewH) SetSpacing(spacing bool) TRet {
-  return TRet(C.list_view_h_set_spacing((*C.widget_t)(this.handle), (C.bool_t)(spacing)));
+func (this TListViewH) SetSpacing(spacing int32) TRet {
+  return TRet(C.list_view_h_set_spacing((*C.widget_t)(this.handle), (C.int32_t)(spacing)));
 }
 
 func TListViewHCast(widget TWidget) TListViewH {
@@ -3182,8 +3218,16 @@ func (this TMledit) SetCursor(cursor uint32) TRet {
   return TRet(C.mledit_set_cursor((*C.widget_t)(this.handle), (C.uint32_t)(cursor)));
 }
 
+func (this TMledit) GetCursor() uint32 {
+  return (uint32)(C.mledit_get_cursor((*C.widget_t)(this.handle)));
+}
+
 func (this TMledit) SetScrollLine(scroll_line uint32) TRet {
   return TRet(C.mledit_set_scroll_line((*C.widget_t)(this.handle), (C.uint32_t)(scroll_line)));
+}
+
+func (this TMledit) ScrollToOffset(offset uint32) TRet {
+  return TRet(C.mledit_scroll_to_offset((*C.widget_t)(this.handle), (C.uint32_t)(offset)));
 }
 
 func (this TMledit) SetOpenImWhenFocused(open_im_when_focused bool) TRet {
@@ -3192,6 +3236,14 @@ func (this TMledit) SetOpenImWhenFocused(open_im_when_focused bool) TRet {
 
 func (this TMledit) SetCloseImWhenBlured(close_im_when_blured bool) TRet {
   return TRet(C.mledit_set_close_im_when_blured((*C.widget_t)(this.handle), (C.bool_t)(close_im_when_blured)));
+}
+
+func (this TMledit) SetSelect(start uint32, end uint32) TRet {
+  return TRet(C.mledit_set_select((*C.widget_t)(this.handle), (C.uint32_t)(start), (C.uint32_t)(end)));
+}
+
+func (this TMledit) GetSelectedText() string {
+  return C.GoString(C.mledit_get_selected_text((*C.widget_t)(this.handle)));
 }
 
 func TMleditCast(widget TWidget) TMledit {
@@ -6296,6 +6348,10 @@ func (this TWidget) IsWindowOpened() bool {
   return (bool)(C.widget_is_window_opened((*C.widget_t)(this.handle)));
 }
 
+func (this TWidget) IsWindowCreated() bool {
+  return (bool)(C.widget_is_window_created((*C.widget_t)(this.handle)));
+}
+
 func (this TWidget) IsParentOf(child TWidget) bool {
   return (bool)(C.widget_is_parent_of((*C.widget_t)(this.handle), (*C.widget_t)(child.handle)));
 }
@@ -6555,6 +6611,7 @@ const (
   WIDGET_PROP_Y string = C.WIDGET_PROP_Y
   WIDGET_PROP_W string = C.WIDGET_PROP_W
   WIDGET_PROP_H string = C.WIDGET_PROP_H
+  WIDGET_PROP_MAX_H string = C.WIDGET_PROP_MAX_H
   WIDGET_PROP_DESIGN_W string = C.WIDGET_PROP_DESIGN_W
   WIDGET_PROP_DESIGN_H string = C.WIDGET_PROP_DESIGN_H
   WIDGET_PROP_AUTO_SCALE_CHILDREN_X string = C.WIDGET_PROP_AUTO_SCALE_CHILDREN_X
@@ -7040,6 +7097,7 @@ func (this TWindowManager) CloseAll() TRet {
 type TWindowStage int
 const (
   WINDOW_STAGE_NONE TWindowStage = C.WINDOW_STAGE_NONE
+  WINDOW_STAGE_LOADED TWindowStage = C.WINDOW_STAGE_LOADED
   WINDOW_STAGE_CREATED TWindowStage = C.WINDOW_STAGE_CREATED
   WINDOW_STAGE_OPENED TWindowStage = C.WINDOW_STAGE_OPENED
   WINDOW_STAGE_CLOSED TWindowStage = C.WINDOW_STAGE_CLOSED
