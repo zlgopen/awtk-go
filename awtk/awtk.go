@@ -1436,8 +1436,8 @@ func (this TEdit) SetCursor(cursor uint32) TRet {
   return TRet(C.edit_set_cursor((*C.widget_t)(this.handle), (C.uint32_t)(cursor)));
 }
 
-func (this TEdit) GetCursor() TRet {
-  return TRet(C.edit_get_cursor((*C.widget_t)(this.handle)));
+func (this TEdit) GetCursor() uint32 {
+  return (uint32)(C.edit_get_cursor((*C.widget_t)(this.handle)));
 }
 
 func (this TEdit) SetSelect(start uint32, end uint32) TRet {
