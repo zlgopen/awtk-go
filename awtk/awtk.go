@@ -1934,8 +1934,8 @@ func TGaugePointerCast(widget TWidget) TGaugePointer {
   return retObj
 }
 
-func (this TGaugePointer) SetAngle(angle int32) TRet {
-  return TRet(C.gauge_pointer_set_angle((*C.widget_t)(this.handle), (C.int32_t)(angle)));
+func (this TGaugePointer) SetAngle(angle float64) TRet {
+  return TRet(C.gauge_pointer_set_angle((*C.widget_t)(this.handle), (C.float_t)(angle)));
 }
 
 func (this TGaugePointer) SetImage(image string) TRet {
@@ -1952,8 +1952,8 @@ func (this TGaugePointer) SetAnchor(anchor_x string, anchor_y string) TRet {
   return TRet(C.gauge_pointer_set_anchor((*C.widget_t)(this.handle), aanchor_x, aanchor_y));
 }
 
-func (this TGaugePointer) GetAngle() int32 {
-  return (int32)((*C.gauge_pointer_t)(unsafe.Pointer(this.handle)).angle);
+func (this TGaugePointer) GetAngle() float64 {
+  return (float64)((*C.gauge_pointer_t)(unsafe.Pointer(this.handle)).angle);
 }
 
 func (this TGaugePointer) GetImage() string {
@@ -1976,6 +1976,18 @@ func TGifImageCreate(parent TWidget, x int, y int, w int, h int) TWidget {
   retObj := TGifImage{}
   retObj.handle = unsafe.Pointer(C.gif_image_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
   return retObj.TWidget
+}
+
+func (this TGifImage) Play() TRet {
+  return TRet(C.gif_image_play((*C.widget_t)(this.handle)));
+}
+
+func (this TGifImage) Stop() TRet {
+  return TRet(C.gif_image_stop((*C.widget_t)(this.handle)));
+}
+
+func (this TGifImage) Pause() TRet {
+  return TRet(C.gif_image_pause((*C.widget_t)(this.handle)));
 }
 
 func TGifImageCast(widget TWidget) TGifImage {
@@ -3196,6 +3208,10 @@ func (this TMledit) SetMaxLines(max_lines uint32) TRet {
   return TRet(C.mledit_set_max_lines((*C.widget_t)(this.handle), (C.uint32_t)(max_lines)));
 }
 
+func (this TMledit) SetMaxChars(max_chars uint32) TRet {
+  return TRet(C.mledit_set_max_chars((*C.widget_t)(this.handle), (C.uint32_t)(max_chars)));
+}
+
 func (this TMledit) SetTips(tips string) TRet {
   atips := C.CString(tips)
   defer C.free(unsafe.Pointer(atips))
@@ -3266,6 +3282,10 @@ func (this TMledit) GetKeyboard() string {
 
 func (this TMledit) GetMaxLines() uint32 {
   return (uint32)((*C.mledit_t)(unsafe.Pointer(this.handle)).max_lines);
+}
+
+func (this TMledit) GetMaxChars() uint32 {
+  return (uint32)((*C.mledit_t)(unsafe.Pointer(this.handle)).max_chars);
 }
 
 func (this TMledit) GetWrapWord() bool {
@@ -4938,6 +4958,8 @@ const (
   STYLE_ID_ROUND_RADIUS_BOTTOM_RIGHT string = C.STYLE_ID_ROUND_RADIUS_BOTTOM_RIGHT
   STYLE_ID_CHILDREN_LAYOUT string = C.STYLE_ID_CHILDREN_LAYOUT
   STYLE_ID_SELF_LAYOUT string = C.STYLE_ID_SELF_LAYOUT
+  STYLE_ID_FOCUSABLE string = C.STYLE_ID_FOCUSABLE
+  STYLE_ID_FEEDBACK string = C.STYLE_ID_FEEDBACK
 )
 type TStyleMutable struct {
   TStyle
@@ -5999,6 +6021,12 @@ func (this TWidget) GetChild(index int32) TWidget {
   return retObj
 }
 
+func (this TWidget) GetFocusedWidget() TWidget {
+  retObj := TWidget{}
+  retObj.handle = unsafe.Pointer(C.widget_get_focused_widget((*C.widget_t)(this.handle)))
+  return retObj
+}
+
 func (this TWidget) GetNativeWindow() TNativeWindow {
   retObj := TNativeWindow{}
   retObj.handle = unsafe.Pointer(C.widget_get_native_window((*C.widget_t)(this.handle)))
@@ -6011,6 +6039,14 @@ func (this TWidget) IndexOf() int32 {
 
 func (this TWidget) CloseWindow() TRet {
   return TRet(C.widget_close_window((*C.widget_t)(this.handle)));
+}
+
+func (this TWidget) Back() TRet {
+  return TRet(C.widget_back((*C.widget_t)(this.handle)));
+}
+
+func (this TWidget) BackToHome() TRet {
+  return TRet(C.widget_back_to_home((*C.widget_t)(this.handle)));
 }
 
 func (this TWidget) Move(x int, y int) TRet {
@@ -6634,6 +6670,7 @@ const (
   WIDGET_PROP_MAX_W string = C.WIDGET_PROP_MAX_W
   WIDGET_PROP_AUTO_ADJUST_SIZE string = C.WIDGET_PROP_AUTO_ADJUST_SIZE
   WIDGET_PROP_SINGLE_INSTANCE string = C.WIDGET_PROP_SINGLE_INSTANCE
+  WIDGET_PROP_STRONGLY_FOCUS string = C.WIDGET_PROP_STRONGLY_FOCUS
   WIDGET_PROP_CHILDREN_LAYOUT string = C.WIDGET_PROP_CHILDREN_LAYOUT
   WIDGET_PROP_LAYOUT string = C.WIDGET_PROP_LAYOUT
   WIDGET_PROP_SELF_LAYOUT string = C.WIDGET_PROP_SELF_LAYOUT
@@ -6984,6 +7021,10 @@ func (this TWindowBase) GetMoveFocusRightKey() string {
 
 func (this TWindowBase) GetSingleInstance() bool {
   return (bool)((*C.window_base_t)(unsafe.Pointer(this.handle)).single_instance);
+}
+
+func (this TWindowBase) GetStronglyFocus() bool {
+  return (bool)((*C.window_base_t)(unsafe.Pointer(this.handle)).strongly_focus);
 }
 
 type TWindowClosable int
