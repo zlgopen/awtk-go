@@ -1576,8 +1576,8 @@ func TEventCast(event TEvent) TEvent {
   return retObj
 }
 
-func (this TEvent) GetType() int {
-  return (int)(C.event_get_type((*C.event_t)(this.handle)));
+func (this TEvent) GetType() uint32 {
+  return (uint32)(C.event_get_type((*C.event_t)(this.handle)));
 }
 
 func TEventCreate(typex uint32) TEvent {
@@ -4441,6 +4441,10 @@ func (this TScrollBar) SetValueOnly(value int32) TRet {
   return TRet(C.scroll_bar_set_value_only((*C.widget_t)(this.handle), (C.int32_t)(value)));
 }
 
+func (this TScrollBar) SetAutoHide(auto_hide bool) TRet {
+  return TRet(C.scroll_bar_set_auto_hide((*C.widget_t)(this.handle), (C.bool_t)(auto_hide)));
+}
+
 func (this TScrollBar) IsMobile() bool {
   return (bool)(C.scroll_bar_is_mobile((*C.widget_t)(this.handle)));
 }
@@ -4455,6 +4459,10 @@ func (this TScrollBar) GetRow() int32 {
 
 func (this TScrollBar) GetAnimatable() bool {
   return (bool)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).animatable);
+}
+
+func (this TScrollBar) GetAutoHide() bool {
+  return (bool)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).auto_hide);
 }
 
 type TScrollView struct {
@@ -5239,6 +5247,10 @@ func (this TTextSelector) SetYspeedScale(yspeed_scale float64) TRet {
   return TRet(C.text_selector_set_yspeed_scale((*C.widget_t)(this.handle), (C.float_t)(yspeed_scale)));
 }
 
+func (this TTextSelector) SetAnimatingTime(animating_time uint32) TRet {
+  return TRet(C.text_selector_set_animating_time((*C.widget_t)(this.handle), (C.uint32_t)(animating_time)));
+}
+
 func (this TTextSelector) GetVisibleNr() uint32 {
   return (uint32)((*C.text_selector_t)(unsafe.Pointer(this.handle)).visible_nr);
 }
@@ -5253,6 +5265,10 @@ func (this TTextSelector) GetOptions() string {
 
 func (this TTextSelector) GetYspeedScale() float64 {
   return (float64)((*C.text_selector_t)(unsafe.Pointer(this.handle)).yspeed_scale);
+}
+
+func (this TTextSelector) GetAnimatingTime() uint32 {
+  return (uint32)((*C.text_selector_t)(unsafe.Pointer(this.handle)).animating_time);
 }
 
 func (this TTextSelector) GetLocalizeOptions() bool {
@@ -5981,6 +5997,48 @@ func (this TView) GetDefaultFocusedChild() string {
   return C.GoString((*C.view_t)(unsafe.Pointer(this.handle)).default_focused_child);
 }
 
+type TVpage struct {
+  TWidget
+}
+
+func TVpageCreate(parent TWidget, x int, y int, w int, h int) TWidget {
+  retObj := TVpage{}
+  retObj.handle = unsafe.Pointer(C.vpage_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
+  return retObj.TWidget
+}
+
+func TVpageCast(widget TWidget) TVpage {
+  retObj := TVpage{}
+  retObj.handle = unsafe.Pointer(C.vpage_cast((*C.widget_t)(widget.handle)))
+  return retObj
+}
+
+func (this TVpage) SetUiAsset(ui_asset string) TRet {
+  aui_asset := C.CString(ui_asset)
+  defer C.free(unsafe.Pointer(aui_asset))
+  return TRet(C.vpage_set_ui_asset((*C.widget_t)(this.handle), aui_asset));
+}
+
+func (this TVpage) SetAnimHint(anim_hint string) TRet {
+  aanim_hint := C.CString(anim_hint)
+  defer C.free(unsafe.Pointer(aanim_hint))
+  return TRet(C.vpage_set_anim_hint((*C.widget_t)(this.handle), aanim_hint));
+}
+
+func (this TVpage) GetUiAsset() string {
+  return C.GoString((*C.vpage_t)(unsafe.Pointer(this.handle)).ui_asset);
+}
+
+func (this TVpage) GetAnimHint() string {
+  return C.GoString((*C.vpage_t)(unsafe.Pointer(this.handle)).anim_hint);
+}
+
+type TVpageEvent int
+const (
+  EVT_VPAGE_WILL_OPEN TVpageEvent = C.EVT_VPAGE_WILL_OPEN
+  EVT_VPAGE_OPEN TVpageEvent = C.EVT_VPAGE_OPEN
+  EVT_VPAGE_CLOSE TVpageEvent = C.EVT_VPAGE_CLOSE
+)
 type TWheelEvent struct {
   TEvent
 }
@@ -6759,6 +6817,7 @@ const (
   WIDGET_PROP_ENABLE_LONG_PRESS string = C.WIDGET_PROP_ENABLE_LONG_PRESS
   WIDGET_PROP_CLICK_THROUGH string = C.WIDGET_PROP_CLICK_THROUGH
   WIDGET_PROP_ANIMATABLE string = C.WIDGET_PROP_ANIMATABLE
+  WIDGET_PROP_AUTO_HIDE string = C.WIDGET_PROP_AUTO_HIDE
   WIDGET_PROP_AUTO_HIDE_SCROLL_BAR string = C.WIDGET_PROP_AUTO_HIDE_SCROLL_BAR
   WIDGET_PROP_IMAGE string = C.WIDGET_PROP_IMAGE
   WIDGET_PROP_FORMAT string = C.WIDGET_PROP_FORMAT
@@ -7101,6 +7160,10 @@ func (this TWindowManager) IsAnimating() bool {
 
 func (this TWindowManager) SetShowFps(show_fps bool) TRet {
   return TRet(C.window_manager_set_show_fps((*C.widget_t)(this.handle), (C.bool_t)(show_fps)));
+}
+
+func (this TWindowManager) SetIgnoreInputEvents(ignore_input_events bool) TRet {
+  return TRet(C.window_manager_set_ignore_input_events((*C.widget_t)(this.handle), (C.bool_t)(ignore_input_events)));
 }
 
 func (this TWindowManager) SetScreenSaverTime(screen_saver_time uint32) TRet {
