@@ -4280,6 +4280,26 @@ func (this TRect) GetH() int {
   return (int)((*C.rect_t)(unsafe.Pointer(this.handle)).h);
 }
 
+type TRectf struct {
+  handle unsafe.Pointer
+}
+
+func (this TRectf) GetX() float64 {
+  return (float64)((*C.rectf_t)(unsafe.Pointer(this.handle)).x);
+}
+
+func (this TRectf) GetY() float64 {
+  return (float64)((*C.rectf_t)(unsafe.Pointer(this.handle)).y);
+}
+
+func (this TRectf) GetW() float64 {
+  return (float64)((*C.rectf_t)(unsafe.Pointer(this.handle)).w);
+}
+
+func (this TRectf) GetH() float64 {
+  return (float64)((*C.rectf_t)(unsafe.Pointer(this.handle)).h);
+}
+
 type TRet int
 const (
   RET_OK TRet = C.RET_OK
@@ -5793,6 +5813,10 @@ func (this TVgcanvas) SetTransform(a float64, b float64, c float64, d float64, e
   return TRet(C.vgcanvas_set_transform((*C.vgcanvas_t)(this.handle), (C.float_t)(a), (C.float_t)(b), (C.float_t)(c), (C.float_t)(d), (C.float_t)(e), (C.float_t)(f)));
 }
 
+func (this TVgcanvas) ClipPath() TRet {
+  return TRet(C.vgcanvas_clip_path((*C.vgcanvas_t)(this.handle)));
+}
+
 func (this TVgcanvas) ClipRect(x float64, y float64, w float64, h float64) TRet {
   return TRet(C.vgcanvas_clip_rect((*C.vgcanvas_t)(this.handle), (C.float_t)(x), (C.float_t)(y), (C.float_t)(w), (C.float_t)(h)));
 }
@@ -7160,6 +7184,10 @@ func (this TWindowManager) IsAnimating() bool {
 
 func (this TWindowManager) SetShowFps(show_fps bool) TRet {
   return TRet(C.window_manager_set_show_fps((*C.widget_t)(this.handle), (C.bool_t)(show_fps)));
+}
+
+func (this TWindowManager) SetMaxFps(max_fps uint32) TRet {
+  return TRet(C.window_manager_set_max_fps((*C.widget_t)(this.handle), (C.uint32_t)(max_fps)));
 }
 
 func (this TWindowManager) SetIgnoreInputEvents(ignore_input_events bool) TRet {
