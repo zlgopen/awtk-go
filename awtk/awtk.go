@@ -3830,8 +3830,20 @@ func (this TObjectArray) Push(v TValue) TRet {
   return TRet(C.object_array_push((*C.object_t)(this.handle), (*C.value_t)(v.handle)));
 }
 
+func (this TObjectArray) IndexOf(v TValue) int32 {
+  return (int32)(C.object_array_index_of((*C.object_t)(this.handle), (*C.value_t)(v.handle)));
+}
+
+func (this TObjectArray) LastIndexOf(v TValue) int32 {
+  return (int32)(C.object_array_last_index_of((*C.object_t)(this.handle), (*C.value_t)(v.handle)));
+}
+
 func (this TObjectArray) Remove(index uint32) TRet {
   return TRet(C.object_array_remove((*C.object_t)(this.handle), (C.uint32_t)(index)));
+}
+
+func (this TObjectArray) GetAndRemove(index uint32, v TValue) TRet {
+  return TRet(C.object_array_get_and_remove((*C.object_t)(this.handle), (C.uint32_t)(index), (*C.value_t)(v.handle)));
 }
 
 func (this TObjectArray) GetSize() uint32 {
@@ -4775,6 +4787,10 @@ func (this TSlideView) SetAnimHint(anim_hint string) TRet {
 
 func (this TSlideView) SetLoop(loop bool) TRet {
   return TRet(C.slide_view_set_loop((*C.widget_t)(this.handle), (C.bool_t)(loop)));
+}
+
+func (this TSlideView) RemoveIndex(index uint32) TRet {
+  return TRet(C.slide_view_remove_index((*C.widget_t)(this.handle), (C.uint32_t)(index)));
 }
 
 func (this TSlideView) GetVertical() bool {
