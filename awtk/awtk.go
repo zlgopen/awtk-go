@@ -1570,6 +1570,12 @@ type TEvent struct {
   handle unsafe.Pointer
 }
 
+func TEventFromName(name string) int32 {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return (int32)(C.event_from_name(aname));
+}
+
 func TEventCast(event TEvent) TEvent {
   retObj := TEvent{}
   retObj.handle = unsafe.Pointer(C.event_cast((*C.event_t)(event.handle)))
@@ -1706,6 +1712,14 @@ const (
   EVT_ERROR TEventType = C.EVT_ERROR
   EVT_DESTROY TEventType = C.EVT_DESTROY
 )
+type TExtWidgets struct {
+  handle unsafe.Pointer
+}
+
+func TExtWidgetsInit() TRet {
+  return TRet(C.tk_ext_widgets_init());
+}
+
 type TFileBrowserView struct {
   TWidget
 }

@@ -104,6 +104,7 @@ func appInit() {
 
 func main() {
 	awtk.Init(320, 480, awtk.APP_DESKTOP, "demo", "res")
+	awtk.TExtWidgetsInit()
 	awtk.InitAssets()
 	appInit()
 
