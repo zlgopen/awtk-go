@@ -359,6 +359,12 @@ type TCalibrationWin struct {
   TWindowBase
 }
 
+func TCalibrationWinCreate(parent TWidget, x int, y int, w int, h int) TWidget {
+  retObj := TCalibrationWin{}
+  retObj.handle = unsafe.Pointer(C.calibration_win_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
+  return retObj.TWidget
+}
+
 func TCalibrationWinCast(widget TWidget) TCalibrationWin {
   retObj := TCalibrationWin{}
   retObj.handle = unsafe.Pointer(C.calibration_win_cast((*C.widget_t)(widget.handle)))
@@ -367,6 +373,12 @@ func TCalibrationWinCast(widget TWidget) TCalibrationWin {
 
 type TCandidates struct {
   TWidget
+}
+
+func TCandidatesCreate(parent TWidget, x int, y int, w int, h int) TWidget {
+  retObj := TCandidates{}
+  retObj.handle = unsafe.Pointer(C.candidates_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
+  return retObj.TWidget
 }
 
 func TCandidatesCast(widget TWidget) TCandidates {
@@ -718,6 +730,12 @@ type TColorComponent struct {
   TWidget
 }
 
+func TColorComponentCreate(parent TWidget, x int, y int, w int, h int) TWidget {
+  retObj := TColorComponent{}
+  retObj.handle = unsafe.Pointer(C.color_component_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
+  return retObj.TWidget
+}
+
 func TColorComponentCast(widget TWidget) TColorComponent {
   retObj := TColorComponent{}
   retObj.handle = unsafe.Pointer(C.color_component_cast((*C.widget_t)(widget.handle)))
@@ -842,6 +860,10 @@ func (this TComboBox) AppendOption(value int32, text string) TRet {
   atext := C.CString(text)
   defer C.free(unsafe.Pointer(atext))
   return TRet(C.combo_box_append_option((*C.widget_t)(this.handle), (C.int32_t)(value), atext));
+}
+
+func (this TComboBox) RemoveOption(value int32) TRet {
+  return TRet(C.combo_box_remove_option((*C.widget_t)(this.handle), (C.int32_t)(value)));
 }
 
 func (this TComboBox) SetOptions(options string) TRet {
@@ -1712,10 +1734,6 @@ const (
   EVT_ERROR TEventType = C.EVT_ERROR
   EVT_DESTROY TEventType = C.EVT_DESTROY
 )
-type TExtWidgets struct {
-  handle unsafe.Pointer
-}
-
 func TExtWidgetsInit() TRet {
   return TRet(C.tk_ext_widgets_init());
 }
@@ -3354,6 +3372,12 @@ func (this TMultiGestureEvent) GetDistance() float64 {
 
 type TMutableImage struct {
   TImageBase
+}
+
+func TMutableImageCreate(parent TWidget, x int, y int, w int, h int) TWidget {
+  retObj := TMutableImage{}
+  retObj.handle = unsafe.Pointer(C.mutable_image_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
+  return retObj.TWidget
 }
 
 type TNamedValue struct {
@@ -5301,6 +5325,10 @@ func (this TTextSelector) SetAnimatingTime(animating_time uint32) TRet {
   return TRet(C.text_selector_set_animating_time((*C.widget_t)(this.handle), (C.uint32_t)(animating_time)));
 }
 
+func (this TTextSelector) SetEnableValueAnimator(enable_value_animator bool) TRet {
+  return TRet(C.text_selector_set_enable_value_animator((*C.widget_t)(this.handle), (C.bool_t)(enable_value_animator)));
+}
+
 func (this TTextSelector) GetVisibleNr() uint32 {
   return (uint32)((*C.text_selector_t)(unsafe.Pointer(this.handle)).visible_nr);
 }
@@ -5327,6 +5355,10 @@ func (this TTextSelector) GetLocalizeOptions() bool {
 
 func (this TTextSelector) GetLoopOptions() bool {
   return (bool)((*C.text_selector_t)(unsafe.Pointer(this.handle)).loop_options);
+}
+
+func (this TTextSelector) GetEnableValueAnimator() bool {
+  return (bool)((*C.text_selector_t)(unsafe.Pointer(this.handle)).enable_value_animator);
 }
 
 type TTheme struct {
@@ -6151,6 +6183,10 @@ func (this TWidget) IndexOf() int32 {
 
 func (this TWidget) CloseWindow() TRet {
   return TRet(C.widget_close_window((*C.widget_t)(this.handle)));
+}
+
+func (this TWidget) CloseWindowForce() TRet {
+  return TRet(C.widget_close_window_force((*C.widget_t)(this.handle)));
 }
 
 func (this TWidget) Back() TRet {
