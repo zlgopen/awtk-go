@@ -7,21 +7,21 @@ import (
 
 func appInit() {
 	win := awtk.TWindowOpen("basic")
-  bar1 := win.Lookup("bar1", true);
-  bar2 := win.Lookup("bar2", true);
+	bar1 := win.Lookup("bar1", true)
+	bar2 := win.Lookup("bar2", true)
 
-  incButton := win.Lookup("inc_value", true);
+	incButton := win.Lookup("inc_value", true)
 	incButton.On(awtk.EVT_CLICK, func(ctx interface{}, e awtk.TEvent) awtk.TRet {
 		fmt.Println("Inc is clicked")
-		bar1.AddValue(10);
-		bar2.AddValue(10);
+		bar1.AddValue(10)
+		bar2.AddValue(10)
 		return awtk.RET_OK
 	}, win)
-  decButton := win.Lookup("dec_value", true);
+	decButton := win.Lookup("dec_value", true)
 	decButton.On(awtk.EVT_CLICK, func(ctx interface{}, e awtk.TEvent) awtk.TRet {
 		fmt.Println("Inc is clicked")
-		bar1.AddValue(-10);
-		bar2.AddValue(-10);
+		bar1.AddValue(-10)
+		bar2.AddValue(-10)
 		return awtk.RET_OK
 	}, win)
 }
