@@ -3432,6 +3432,10 @@ func (this TNativeWindow) Resize(w int, h int, force bool) TRet {
   return TRet(C.native_window_resize((*C.native_window_t)(this.handle), (C.wh_t)(w), (C.wh_t)(h), (C.bool_t)(force)));
 }
 
+func (this TNativeWindow) SetOrientation(old_orientation int64, new_orientation int64) TRet {
+  return TRet(C.native_window_set_orientation((*C.native_window_t)(this.handle), (C.lcd_orientation_t)(old_orientation), (C.lcd_orientation_t)(new_orientation)));
+}
+
 func (this TNativeWindow) Minimize() TRet {
   return TRet(C.native_window_minimize((*C.native_window_t)(this.handle)));
 }
@@ -3919,10 +3923,6 @@ func (this TObjectDefault) ClearProps() TRet {
   return TRet(C.object_default_clear_props((*C.object_t)(this.handle)));
 }
 
-func (this TObjectDefault) GetPropsSize() uint32 {
-  return (uint32)((*C.object_default_t)(unsafe.Pointer(this.handle)).props_size);
-}
-
 type TObjectProp string
 const (
   OBJECT_PROP_SIZE string = C.OBJECT_PROP_SIZE
@@ -3940,6 +3940,10 @@ func TOrientationEventCast(event TEvent) TOrientationEvent {
 
 func (this TOrientationEvent) GetOrientation() int32 {
   return (int32)((*C.orientation_event_t)(unsafe.Pointer(this.handle)).orientation);
+}
+
+func (this TOrientationEvent) GetOldOrientation() int32 {
+  return (int32)((*C.orientation_event_t)(unsafe.Pointer(this.handle)).old_orientation);
 }
 
 type TOverlay struct {
