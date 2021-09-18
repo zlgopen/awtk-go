@@ -3236,6 +3236,10 @@ func (this TMledit) SetWrapWord(wrap_word bool) TRet {
   return TRet(C.mledit_set_wrap_word((*C.widget_t)(this.handle), (C.bool_t)(wrap_word)));
 }
 
+func (this TMledit) SetOverwrite(overwrite bool) TRet {
+  return TRet(C.mledit_set_overwrite((*C.widget_t)(this.handle), (C.bool_t)(overwrite)));
+}
+
 func (this TMledit) SetMaxLines(max_lines uint32) TRet {
   return TRet(C.mledit_set_max_lines((*C.widget_t)(this.handle), (C.uint32_t)(max_lines)));
 }
@@ -3294,6 +3298,12 @@ func (this TMledit) GetSelectedText() string {
   return C.GoString(C.mledit_get_selected_text((*C.widget_t)(this.handle)));
 }
 
+func (this TMledit) InsertText(offset uint32, text string) TRet {
+  atext := C.CString(text)
+  defer C.free(unsafe.Pointer(atext))
+  return TRet(C.mledit_insert_text((*C.widget_t)(this.handle), (C.uint32_t)(offset), atext));
+}
+
 func TMleditCast(widget TWidget) TMledit {
   retObj := TMledit{}
   retObj.handle = unsafe.Pointer(C.mledit_cast((*C.widget_t)(widget.handle)))
@@ -3320,12 +3330,16 @@ func (this TMledit) GetMaxChars() uint32 {
   return (uint32)((*C.mledit_t)(unsafe.Pointer(this.handle)).max_chars);
 }
 
-func (this TMledit) GetWrapWord() bool {
-  return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).wrap_word);
-}
-
 func (this TMledit) GetScrollLine() uint32 {
   return (uint32)((*C.mledit_t)(unsafe.Pointer(this.handle)).scroll_line);
+}
+
+func (this TMledit) GetOverwrite() bool {
+  return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).overwrite);
+}
+
+func (this TMledit) GetWrapWord() bool {
+  return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).wrap_word);
 }
 
 func (this TMledit) GetReadonly() bool {
@@ -3912,6 +3926,12 @@ type TObjectDefault struct {
 func TObjectDefaultCreate() TObject {
   retObj := TObjectDefault{}
   retObj.handle = unsafe.Pointer(C.object_default_create())
+  return retObj.TObject
+}
+
+func TObjectDefaultCreateEx(enable_path bool) TObject {
+  retObj := TObjectDefault{}
+  retObj.handle = unsafe.Pointer(C.object_default_create_ex((C.bool_t)(enable_path)))
   return retObj.TObject
 }
 
@@ -5792,6 +5812,7 @@ const (
   VALUE_TYPE_BINARY TValueType = C.VALUE_TYPE_BINARY
   VALUE_TYPE_UBJSON TValueType = C.VALUE_TYPE_UBJSON
   VALUE_TYPE_TOKEN TValueType = C.VALUE_TYPE_TOKEN
+  VALUE_TYPE_GRADIENT TValueType = C.VALUE_TYPE_GRADIENT
 )
 type TVgcanvas struct {
   handle unsafe.Pointer
