@@ -112,6 +112,22 @@ func main() {
 }
 ```
 
+## 注意事项
+
+* 应用程序类型
+
+> 初始化时指定为桌面类型类型时，使用PC原生输入法，不会弹出AWTK自身软键盘。
+
+```go
+awtk.Init(320, 480, awtk.APP_DESKTOP, "demo", "res")
+```
+
+> 如果希望使用AWTK内置输入法，请初始化为MOBILE类型。
+
+```go
+awtk.Init(320, 480, awtk.APP_MOBILE, "demo", "res")
+```
+
 ## 文档
 
 * [AWTK JS API 文档](https://github.com/zlgopen/awtk-binding/tree/master/docs/js)
