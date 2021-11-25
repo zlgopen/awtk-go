@@ -433,10 +433,6 @@ func (this TCanvas) GetHeight() int {
   return (int)(C.canvas_get_height((*C.canvas_t)(this.handle)));
 }
 
-func (this TCanvas) GetClipRect(r TRect) TRet {
-  return TRet(C.canvas_get_clip_rect((*C.canvas_t)(this.handle), (*C.rect_t)(r.handle)));
-}
-
 func (this TCanvas) SetClipRect(r TRect) TRet {
   return TRet(C.canvas_set_clip_rect((*C.canvas_t)(this.handle), (*C.rect_t)(r.handle)));
 }
@@ -1259,6 +1255,10 @@ func (this TDraggable) SetDragWindow(drag_window bool) TRet {
   return TRet(C.draggable_set_drag_window((*C.widget_t)(this.handle), (C.bool_t)(drag_window)));
 }
 
+func (this TDraggable) SetDragParent(drag_parent uint32) TRet {
+  return TRet(C.draggable_set_drag_parent((*C.widget_t)(this.handle), (C.uint32_t)(drag_parent)));
+}
+
 func (this TDraggable) GetTop() int32 {
   return (int32)((*C.draggable_t)(unsafe.Pointer(this.handle)).top);
 }
@@ -1285,6 +1285,10 @@ func (this TDraggable) GetHorizontalOnly() bool {
 
 func (this TDraggable) GetDragWindow() bool {
   return (bool)((*C.draggable_t)(unsafe.Pointer(this.handle)).drag_window);
+}
+
+func (this TDraggable) GetDragParent() uint32 {
+  return (uint32)((*C.draggable_t)(unsafe.Pointer(this.handle)).drag_parent);
 }
 
 type TDragger struct {
@@ -1706,6 +1710,7 @@ const (
   EVT_ORIENTATION_CHANGED TEventType = C.EVT_ORIENTATION_CHANGED
   EVT_WIDGET_CREATED TEventType = C.EVT_WIDGET_CREATED
   EVT_REQUEST_QUIT_APP TEventType = C.EVT_REQUEST_QUIT_APP
+  EVT_THEME_WILL_CHANGE TEventType = C.EVT_THEME_WILL_CHANGE
   EVT_THEME_CHANGED TEventType = C.EVT_THEME_CHANGED
   EVT_WIDGET_ADD_CHILD TEventType = C.EVT_WIDGET_ADD_CHILD
   EVT_WIDGET_REMOVE_CHILD TEventType = C.EVT_WIDGET_REMOVE_CHILD
@@ -1714,6 +1719,7 @@ const (
   EVT_SCROLL_END TEventType = C.EVT_SCROLL_END
   EVT_MULTI_GESTURE TEventType = C.EVT_MULTI_GESTURE
   EVT_PAGE_CHANGED TEventType = C.EVT_PAGE_CHANGED
+  EVT_PAGE_CHANGING TEventType = C.EVT_PAGE_CHANGING
   EVT_ASSET_MANAGER_LOAD_ASSET TEventType = C.EVT_ASSET_MANAGER_LOAD_ASSET
   EVT_ASSET_MANAGER_UNLOAD_ASSET TEventType = C.EVT_ASSET_MANAGER_UNLOAD_ASSET
   EVT_ASSET_MANAGER_CLEAR_CACHE TEventType = C.EVT_ASSET_MANAGER_CLEAR_CACHE
@@ -2022,10 +2028,18 @@ func (this TGifImage) Pause() TRet {
   return TRet(C.gif_image_pause((*C.widget_t)(this.handle)));
 }
 
+func (this TGifImage) SetLoop(loop uint32) TRet {
+  return TRet(C.gif_image_set_loop((*C.widget_t)(this.handle), (C.uint32_t)(loop)));
+}
+
 func TGifImageCast(widget TWidget) TGifImage {
   retObj := TGifImage{}
   retObj.handle = unsafe.Pointer(C.gif_image_cast((*C.widget_t)(widget.handle)))
   return retObj
+}
+
+func (this TGifImage) GetLoop() uint32 {
+  return (uint32)((*C.gif_image_t)(unsafe.Pointer(this.handle)).loop);
 }
 
 func Init(w int, h int, app_type TAppType, app_name string, app_root string) TRet {
@@ -2128,6 +2142,10 @@ func (this THscrollLabel) SetDuration(duration int32) TRet {
   return TRet(C.hscroll_label_set_duration((*C.widget_t)(this.handle), (C.int32_t)(duration)));
 }
 
+func (this THscrollLabel) SetSpeed(speed float64) TRet {
+  return TRet(C.hscroll_label_set_speed((*C.widget_t)(this.handle), (C.float_t)(speed)));
+}
+
 func (this THscrollLabel) SetOnlyFocus(only_focus bool) TRet {
   return TRet(C.hscroll_label_set_only_focus((*C.widget_t)(this.handle), (C.bool_t)(only_focus)));
 }
@@ -2192,6 +2210,10 @@ func (this THscrollLabel) GetLull() int32 {
 
 func (this THscrollLabel) GetDuration() int32 {
   return (int32)((*C.hscroll_label_t)(unsafe.Pointer(this.handle)).duration);
+}
+
+func (this THscrollLabel) GetSpeed() float64 {
+  return (float64)((*C.hscroll_label_t)(unsafe.Pointer(this.handle)).speed);
 }
 
 func (this THscrollLabel) GetXoffset() int32 {
@@ -3480,6 +3502,12 @@ func (this TNativeWindow) SetCursor(name string, img TBitmap) TRet {
   return TRet(C.native_window_set_cursor((*C.native_window_t)(this.handle), aname, (*C.bitmap_t)(img.handle)));
 }
 
+func (this TNativeWindow) SetTitle(app_name string) TRet {
+  aapp_name := C.CString(app_name)
+  defer C.free(unsafe.Pointer(aapp_name))
+  return TRet(C.native_window_set_title((*C.native_window_t)(this.handle), aapp_name));
+}
+
 type TObject struct {
   TEmitter
 }
@@ -3948,6 +3976,16 @@ const (
   OBJECT_PROP_SIZE string = C.OBJECT_PROP_SIZE
   OBJECT_PROP_CHECKED string = C.OBJECT_PROP_CHECKED
 )
+type TOffsetChangeEvent struct {
+  TEvent
+}
+
+func TOffsetChangeEventCast(event TEvent) TOffsetChangeEvent {
+  retObj := TOffsetChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.offset_change_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
 type TOrientationEvent struct {
   TEvent
 }
@@ -4543,12 +4581,20 @@ func (this TScrollBar) IsMobile() bool {
   return (bool)(C.scroll_bar_is_mobile((*C.widget_t)(this.handle)));
 }
 
+func (this TScrollBar) SetAnimatorTime(animator_time uint32) TRet {
+  return TRet(C.scroll_bar_set_animator_time((*C.widget_t)(this.handle), (C.uint32_t)(animator_time)));
+}
+
 func (this TScrollBar) GetVirtualSize() int32 {
   return (int32)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).virtual_size);
 }
 
 func (this TScrollBar) GetRow() int32 {
   return (int32)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).row);
+}
+
+func (this TScrollBar) GetAnimatorTime() uint32 {
+  return (uint32)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).animator_time);
 }
 
 func (this TScrollBar) GetAnimatable() bool {
@@ -4737,6 +4783,10 @@ func (this TSlideIndicator) SetIndicatedTarget(target_name string) TRet {
   return TRet(C.slide_indicator_set_indicated_target((*C.widget_t)(this.handle), atarget_name));
 }
 
+func (this TSlideIndicator) SetTransition(transition bool) TRet {
+  return TRet(C.slide_indicator_set_transition((*C.widget_t)(this.handle), (C.bool_t)(transition)));
+}
+
 func (this TSlideIndicator) GetMax() uint32 {
   return (uint32)((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).max);
 }
@@ -4771,6 +4821,10 @@ func (this TSlideIndicator) GetAnchorY() float64 {
 
 func (this TSlideIndicator) GetIndicatedTarget() string {
   return C.GoString((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).indicated_target);
+}
+
+func (this TSlideIndicator) GetTransition() bool {
+  return (bool)((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).transition);
 }
 
 type TSlideMenu struct {
@@ -5395,6 +5449,20 @@ func TThemeInstance() TTheme {
   return retObj
 }
 
+type TThemeChangeEvent struct {
+  TEvent
+}
+
+func TThemeChangeEventCast(event TEvent) TThemeChangeEvent {
+  retObj := TThemeChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.theme_change_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func (this TThemeChangeEvent) GetName() string {
+  return C.GoString((*C.theme_change_event_t)(unsafe.Pointer(this.handle)).name);
+}
+
 type TTimeClock struct {
   TWidget
 }
@@ -5908,6 +5976,10 @@ func (this TVgcanvas) ClipRect(x float64, y float64, w float64, h float64) TRet 
   return TRet(C.vgcanvas_clip_rect((*C.vgcanvas_t)(this.handle), (C.float_t)(x), (C.float_t)(y), (C.float_t)(w), (C.float_t)(h)));
 }
 
+func (this TVgcanvas) IsRectfIntClipRect(left float64, top float64, right float64, bottom float64) bool {
+  return (bool)(C.vgcanvas_is_rectf_int_clip_rect((*C.vgcanvas_t)(this.handle), (C.float_t)(left), (C.float_t)(top), (C.float_t)(right), (C.float_t)(bottom)));
+}
+
 func (this TVgcanvas) IntersectClipRect(x float64, y float64, w float64, h float64) TRet {
   return TRet(C.vgcanvas_intersect_clip_rect((*C.vgcanvas_t)(this.handle), (C.float_t)(x), (C.float_t)(y), (C.float_t)(w), (C.float_t)(h)));
 }
@@ -5960,6 +6032,10 @@ func (this TVgcanvas) MeasureText(text string) float64 {
 
 func (this TVgcanvas) DrawImage(img TBitmap, sx float64, sy float64, sw float64, sh float64, dx float64, dy float64, dw float64, dh float64) TRet {
   return TRet(C.vgcanvas_draw_image((*C.vgcanvas_t)(this.handle), (*C.bitmap_t)(img.handle), (C.float_t)(sx), (C.float_t)(sy), (C.float_t)(sw), (C.float_t)(sh), (C.float_t)(dx), (C.float_t)(dy), (C.float_t)(dw), (C.float_t)(dh)));
+}
+
+func (this TVgcanvas) DrawImageRepeat(img TBitmap, sx float64, sy float64, sw float64, sh float64, dx float64, dy float64, dw float64, dh float64, dst_w float64, dst_h float64) TRet {
+  return TRet(C.vgcanvas_draw_image_repeat((*C.vgcanvas_t)(this.handle), (*C.bitmap_t)(img.handle), (C.float_t)(sx), (C.float_t)(sy), (C.float_t)(sw), (C.float_t)(sh), (C.float_t)(dx), (C.float_t)(dy), (C.float_t)(dw), (C.float_t)(dh), (C.float_t)(dst_w), (C.float_t)(dst_h)));
 }
 
 func (this TVgcanvas) DrawIcon(img TBitmap, sx float64, sy float64, sw float64, sh float64, dx float64, dy float64, dw float64, dh float64) TRet {
@@ -6234,16 +6310,32 @@ func (this TWidget) MoveResize(x int, y int, w int, h int) TRet {
   return TRet(C.widget_move_resize((*C.widget_t)(this.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)));
 }
 
-func (this TWidget) SetValue(value int32) TRet {
-  return TRet(C.widget_set_value((*C.widget_t)(this.handle), (C.int32_t)(value)));
+func (this TWidget) GetValue() float64 {
+  return (float64)(C.widget_get_value((*C.widget_t)(this.handle)));
 }
 
-func (this TWidget) AnimateValueTo(value int32, duration uint32) TRet {
-  return TRet(C.widget_animate_value_to((*C.widget_t)(this.handle), (C.int32_t)(value), (C.uint32_t)(duration)));
+func (this TWidget) SetValue(value float64) TRet {
+  return TRet(C.widget_set_value((*C.widget_t)(this.handle), (C.float_t)(value)));
 }
 
-func (this TWidget) AddValue(delta int32) TRet {
-  return TRet(C.widget_add_value((*C.widget_t)(this.handle), (C.int32_t)(delta)));
+func (this TWidget) AddValue(delta float64) TRet {
+  return TRet(C.widget_add_value((*C.widget_t)(this.handle), (C.float_t)(delta)));
+}
+
+func (this TWidget) GetValueInt() int32 {
+  return (int32)(C.widget_get_value_int((*C.widget_t)(this.handle)));
+}
+
+func (this TWidget) SetValueInt(value int32) TRet {
+  return TRet(C.widget_set_value_int((*C.widget_t)(this.handle), (C.int32_t)(value)));
+}
+
+func (this TWidget) AddValueInt(delta int32) TRet {
+  return TRet(C.widget_add_value_int((*C.widget_t)(this.handle), (C.int32_t)(delta)));
+}
+
+func (this TWidget) AnimateValueTo(value float64, duration uint32) TRet {
+  return TRet(C.widget_animate_value_to((*C.widget_t)(this.handle), (C.float_t)(value), (C.uint32_t)(duration)));
 }
 
 func (this TWidget) IsStyleExist(style_name string, state_name string) bool {
@@ -6294,10 +6386,6 @@ func (this TWidget) SetTrText(text string) TRet {
   atext := C.CString(text)
   defer C.free(unsafe.Pointer(atext))
   return TRet(C.widget_set_tr_text((*C.widget_t)(this.handle), atext));
-}
-
-func (this TWidget) GetValue() int32 {
-  return (int32)(C.widget_get_value((*C.widget_t)(this.handle)));
 }
 
 func (this TWidget) GetEnable() bool {
@@ -6527,6 +6615,18 @@ func (this TWidget) GetPropPointer(name string) unsafe.Pointer {
   aname := C.CString(name)
   defer C.free(unsafe.Pointer(aname))
   return (unsafe.Pointer)(C.widget_get_prop_pointer((*C.widget_t)(this.handle), aname));
+}
+
+func (this TWidget) SetPropFloat(name string, v float64) TRet {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return TRet(C.widget_set_prop_float((*C.widget_t)(this.handle), aname, (C.float_t)(v)));
+}
+
+func (this TWidget) GetPropFloat(name string, defval float64) float64 {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return (float64)(C.widget_get_prop_float((*C.widget_t)(this.handle), aname, (C.float_t)(defval)));
 }
 
 func (this TWidget) SetPropInt(name string, v int32) TRet {
@@ -6978,6 +7078,7 @@ type TWidgetState string
 const (
   WIDGET_STATE_NONE string = C.WIDGET_STATE_NONE
   WIDGET_STATE_NORMAL string = C.WIDGET_STATE_NORMAL
+  WIDGET_STATE_ACTIVATED string = C.WIDGET_STATE_ACTIVATED
   WIDGET_STATE_CHANGED string = C.WIDGET_STATE_CHANGED
   WIDGET_STATE_PRESSED string = C.WIDGET_STATE_PRESSED
   WIDGET_STATE_OVER string = C.WIDGET_STATE_OVER
