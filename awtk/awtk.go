@@ -868,7 +868,7 @@ func (this TComboBox) SetOptions(options string) TRet {
   return TRet(C.combo_box_set_options((*C.widget_t)(this.handle), aoptions));
 }
 
-func (this TComboBox) GetValue() int32 {
+func (this TComboBox) GetValueInt() int32 {
   return (int32)(C.combo_box_get_value((*C.widget_t)(this.handle)));
 }
 
@@ -5361,7 +5361,7 @@ func (this TTextSelector) SetRangeOptions(start int32, nr uint32, step int32) TR
   return TRet(C.text_selector_set_range_options((*C.widget_t)(this.handle), (C.int32_t)(start), (C.uint32_t)(nr), (C.int32_t)(step)));
 }
 
-func (this TTextSelector) GetValue() int32 {
+func (this TTextSelector) GetValueInt() int32 {
   return (int32)(C.text_selector_get_value((*C.widget_t)(this.handle)));
 }
 
