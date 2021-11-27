@@ -5112,9 +5112,9 @@ const (
   STYLE_ID_SELECTED_FG_COLOR string = C.STYLE_ID_SELECTED_FG_COLOR
   STYLE_ID_SELECTED_TEXT_COLOR string = C.STYLE_ID_SELECTED_TEXT_COLOR
   STYLE_ID_ROUND_RADIUS string = C.STYLE_ID_ROUND_RADIUS
-  STYLE_ID_ROUND_RADIUS_TOP_LETF string = C.STYLE_ID_ROUND_RADIUS_TOP_LETF
+  STYLE_ID_ROUND_RADIUS_TOP_LEFT string = C.STYLE_ID_ROUND_RADIUS_TOP_LEFT
   STYLE_ID_ROUND_RADIUS_TOP_RIGHT string = C.STYLE_ID_ROUND_RADIUS_TOP_RIGHT
-  STYLE_ID_ROUND_RADIUS_BOTTOM_LETF string = C.STYLE_ID_ROUND_RADIUS_BOTTOM_LETF
+  STYLE_ID_ROUND_RADIUS_BOTTOM_LEFT string = C.STYLE_ID_ROUND_RADIUS_BOTTOM_LEFT
   STYLE_ID_ROUND_RADIUS_BOTTOM_RIGHT string = C.STYLE_ID_ROUND_RADIUS_BOTTOM_RIGHT
   STYLE_ID_CHILDREN_LAYOUT string = C.STYLE_ID_CHILDREN_LAYOUT
   STYLE_ID_SELF_LAYOUT string = C.STYLE_ID_SELF_LAYOUT
@@ -5976,8 +5976,8 @@ func (this TVgcanvas) ClipRect(x float64, y float64, w float64, h float64) TRet 
   return TRet(C.vgcanvas_clip_rect((*C.vgcanvas_t)(this.handle), (C.float_t)(x), (C.float_t)(y), (C.float_t)(w), (C.float_t)(h)));
 }
 
-func (this TVgcanvas) IsRectfIntClipRect(left float64, top float64, right float64, bottom float64) bool {
-  return (bool)(C.vgcanvas_is_rectf_int_clip_rect((*C.vgcanvas_t)(this.handle), (C.float_t)(left), (C.float_t)(top), (C.float_t)(right), (C.float_t)(bottom)));
+func (this TVgcanvas) IsRectfInClipRect(left float64, top float64, right float64, bottom float64) bool {
+  return (bool)(C.vgcanvas_is_rectf_in_clip_rect((*C.vgcanvas_t)(this.handle), (C.float_t)(left), (C.float_t)(top), (C.float_t)(right), (C.float_t)(bottom)));
 }
 
 func (this TVgcanvas) IntersectClipRect(x float64, y float64, w float64, h float64) TRet {
