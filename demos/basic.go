@@ -13,15 +13,15 @@ func appInit() {
 	incButton := win.Lookup("inc_value", true)
 	incButton.On(awtk.EVT_CLICK, func(ctx interface{}, e awtk.TEvent) awtk.TRet {
 		fmt.Println("Inc is clicked")
-		bar1.AddValue(10)
-		bar2.AddValue(10)
+		bar1.AddValueInt(10)
+		bar2.AddValueInt(10)
 		return awtk.RET_OK
 	}, win)
 	decButton := win.Lookup("dec_value", true)
 	decButton.On(awtk.EVT_CLICK, func(ctx interface{}, e awtk.TEvent) awtk.TRet {
 		fmt.Println("Dec is clicked")
-		bar1.AddValue(-10)
-		bar2.AddValue(-10)
+		bar1.AddValueInt(-10)
+		bar2.AddValueInt(-10)
 		return awtk.RET_OK
 	}, win)
 }

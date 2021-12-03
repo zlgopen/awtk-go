@@ -433,6 +433,10 @@ func (this TCanvas) GetHeight() int {
   return (int)(C.canvas_get_height((*C.canvas_t)(this.handle)));
 }
 
+func (this TCanvas) GetClipRect(r TRect) TRet {
+  return TRet(C.canvas_get_clip_rect((*C.canvas_t)(this.handle), (*C.rect_t)(r.handle)));
+}
+
 func (this TCanvas) SetClipRect(r TRect) TRet {
   return TRet(C.canvas_set_clip_rect((*C.canvas_t)(this.handle), (*C.rect_t)(r.handle)));
 }
