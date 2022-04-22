@@ -284,6 +284,8 @@ const (
   BITMAP_FLAG_TEXTURE TBitmapFlag = C.BITMAP_FLAG_TEXTURE
   BITMAP_FLAG_CHANGED TBitmapFlag = C.BITMAP_FLAG_CHANGED
   BITMAP_FLAG_PREMULTI_ALPHA TBitmapFlag = C.BITMAP_FLAG_PREMULTI_ALPHA
+  BITMAP_FLAG_LCD_ORIENTATION TBitmapFlag = C.BITMAP_FLAG_LCD_ORIENTATION
+  BITMAP_FLAG_GPU_FBO_TEXTURE TBitmapFlag = C.BITMAP_FLAG_GPU_FBO_TEXTURE
 )
 type TBitmapFormat int
 const (
@@ -499,6 +501,10 @@ func (this TCanvas) SetFont(name string, size int) TRet {
   aname := C.CString(name)
   defer C.free(unsafe.Pointer(aname))
   return TRet(C.canvas_set_font((*C.canvas_t)(this.handle), aname, (C.font_size_t)(size)));
+}
+
+func (this TCanvas) ResetFont() TRet {
+  return TRet(C.canvas_reset_font((*C.canvas_t)(this.handle)));
 }
 
 func (this TCanvas) MeasureText(str string) float64 {
@@ -874,6 +880,12 @@ func (this TComboBox) SetOptions(options string) TRet {
 
 func (this TComboBox) GetValueInt() int32 {
   return (int32)(C.combo_box_get_value((*C.widget_t)(this.handle)));
+}
+
+func (this TComboBox) HasOptionText(text string) bool {
+  atext := C.CString(text)
+  defer C.free(unsafe.Pointer(atext))
+  return (bool)(C.combo_box_has_option_text((*C.widget_t)(this.handle), atext));
 }
 
 func (this TComboBox) GetTextValue() string {
@@ -1259,6 +1271,10 @@ func (this TDraggable) SetDragWindow(drag_window bool) TRet {
   return TRet(C.draggable_set_drag_window((*C.widget_t)(this.handle), (C.bool_t)(drag_window)));
 }
 
+func (this TDraggable) SetDragNativeWindow(drag_native_window bool) TRet {
+  return TRet(C.draggable_set_drag_native_window((*C.widget_t)(this.handle), (C.bool_t)(drag_native_window)));
+}
+
 func (this TDraggable) SetDragParent(drag_parent uint32) TRet {
   return TRet(C.draggable_set_drag_parent((*C.widget_t)(this.handle), (C.uint32_t)(drag_parent)));
 }
@@ -1289,6 +1305,10 @@ func (this TDraggable) GetHorizontalOnly() bool {
 
 func (this TDraggable) GetDragWindow() bool {
   return (bool)((*C.draggable_t)(unsafe.Pointer(this.handle)).drag_window);
+}
+
+func (this TDraggable) GetDragNativeWindow() bool {
+  return (bool)((*C.draggable_t)(unsafe.Pointer(this.handle)).drag_native_window);
 }
 
 func (this TDraggable) GetDragParent() uint32 {
@@ -1388,6 +1408,12 @@ func (this TEdit) SetInt(value int32) TRet {
 
 func (this TEdit) SetDouble(value float64) TRet {
   return TRet(C.edit_set_double((*C.widget_t)(this.handle), (C.double)(value)));
+}
+
+func (this TEdit) SetDoubleEx(format string, value float64) TRet {
+  aformat := C.CString(format)
+  defer C.free(unsafe.Pointer(aformat))
+  return TRet(C.edit_set_double_ex((*C.widget_t)(this.handle), aformat, (C.double)(value)));
 }
 
 func (this TEdit) SetTextLimit(min uint32, max uint32) TRet {
@@ -2079,6 +2105,8 @@ const (
   GLYPH_FMT_ALPHA TGlyphFormat = C.GLYPH_FMT_ALPHA
   GLYPH_FMT_MONO TGlyphFormat = C.GLYPH_FMT_MONO
   GLYPH_FMT_RGBA TGlyphFormat = C.GLYPH_FMT_RGBA
+  GLYPH_FMT_ALPHA2 TGlyphFormat = C.GLYPH_FMT_ALPHA2
+  GLYPH_FMT_ALPHA4 TGlyphFormat = C.GLYPH_FMT_ALPHA4
 )
 type TGrid struct {
   TWidget
@@ -3001,6 +3029,22 @@ func TLineNumberCast(widget TWidget) TLineNumber {
   retObj := TLineNumber{}
   retObj.handle = unsafe.Pointer(C.line_number_cast((*C.widget_t)(widget.handle)))
   return retObj
+}
+
+func (this TLineNumber) AddHighlightLine(line int32) TRet {
+  return TRet(C.line_number_add_highlight_line((*C.widget_t)(this.handle), (C.int32_t)(line)));
+}
+
+func (this TLineNumber) SetActiveLine(line int32) TRet {
+  return TRet(C.line_number_set_active_line((*C.widget_t)(this.handle), (C.int32_t)(line)));
+}
+
+func (this TLineNumber) ClearHighlight() TRet {
+  return TRet(C.line_number_clear_highlight((*C.widget_t)(this.handle)));
+}
+
+func (this TLineNumber) IsHighlightLine(line int32) bool {
+  return (bool)(C.line_number_is_highlight_line((*C.widget_t)(this.handle), (C.int32_t)(line)));
 }
 
 type TListItem struct {
@@ -4815,12 +4859,12 @@ func (this TSlideIndicator) GetSize() uint32 {
   return (uint32)((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).size);
 }
 
-func (this TSlideIndicator) GetAnchorX() float64 {
-  return (float64)((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).anchor_x);
+func (this TSlideIndicator) GetAnchorX() string {
+  return C.GoString((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).anchor_x);
 }
 
-func (this TSlideIndicator) GetAnchorY() float64 {
-  return (float64)((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).anchor_y);
+func (this TSlideIndicator) GetAnchorY() string {
+  return C.GoString((*C.slide_indicator_t)(unsafe.Pointer(this.handle)).anchor_y);
 }
 
 func (this TSlideIndicator) GetIndicatedTarget() string {
@@ -4957,6 +5001,12 @@ func (this TSlider) SetMax(max float64) TRet {
   return TRet(C.slider_set_max((*C.widget_t)(this.handle), (C.double)(max)));
 }
 
+func (this TSlider) SetLineCap(line_cap string) TRet {
+  aline_cap := C.CString(line_cap)
+  defer C.free(unsafe.Pointer(aline_cap))
+  return TRet(C.slider_set_line_cap((*C.widget_t)(this.handle), aline_cap));
+}
+
 func (this TSlider) SetStep(step float64) TRet {
   return TRet(C.slider_set_step((*C.widget_t)(this.handle), (C.double)(step)));
 }
@@ -4999,6 +5049,10 @@ func (this TSlider) GetDraggerAdaptToIcon() bool {
 
 func (this TSlider) GetSlideWithBar() bool {
   return (bool)((*C.slider_t)(unsafe.Pointer(this.handle)).slide_with_bar);
+}
+
+func (this TSlider) GetLineCap() string {
+  return C.GoString((*C.slider_t)(unsafe.Pointer(this.handle)).line_cap);
 }
 
 type TSpinBox struct {
@@ -5851,6 +5905,18 @@ func TValueCast(value TValue) TValue {
   return retObj
 }
 
+func (this TValue) Id() string {
+  return C.GoString(C.value_id((*C.value_t)(this.handle)));
+}
+
+func (this TValue) Func() unsafe.Pointer {
+  return (unsafe.Pointer)(C.value_func((*C.value_t)(this.handle)));
+}
+
+func (this TValue) FuncDef() unsafe.Pointer {
+  return (unsafe.Pointer)(C.value_func_def((*C.value_t)(this.handle)));
+}
+
 type TValueChangeEvent struct {
   TEvent
 }
@@ -5885,6 +5951,9 @@ const (
   VALUE_TYPE_UBJSON TValueType = C.VALUE_TYPE_UBJSON
   VALUE_TYPE_TOKEN TValueType = C.VALUE_TYPE_TOKEN
   VALUE_TYPE_GRADIENT TValueType = C.VALUE_TYPE_GRADIENT
+  VALUE_TYPE_ID TValueType = C.VALUE_TYPE_ID
+  VALUE_TYPE_FUNC TValueType = C.VALUE_TYPE_FUNC
+  VALUE_TYPE_FUNC_DEF TValueType = C.VALUE_TYPE_FUNC_DEF
 )
 type TVgcanvas struct {
   handle unsafe.Pointer
@@ -6270,6 +6339,22 @@ func (this TWidget) GetChild(index int32) TWidget {
   return retObj
 }
 
+func (this TWidget) FindParentByName(name string) TWidget {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  retObj := TWidget{}
+  retObj.handle = unsafe.Pointer(C.widget_find_parent_by_name((*C.widget_t)(this.handle), aname))
+  return retObj
+}
+
+func (this TWidget) FindParentByType(typex string) TWidget {
+  atypex := C.CString(typex)
+  defer C.free(unsafe.Pointer(atypex))
+  retObj := TWidget{}
+  retObj.handle = unsafe.Pointer(C.widget_find_parent_by_type((*C.widget_t)(this.handle), atypex))
+  return retObj
+}
+
 func (this TWidget) GetFocusedWidget() TWidget {
   retObj := TWidget{}
   retObj.handle = unsafe.Pointer(C.widget_get_focused_widget((*C.widget_t)(this.handle)))
@@ -6304,6 +6389,10 @@ func (this TWidget) BackToHome() TRet {
 
 func (this TWidget) Move(x int, y int) TRet {
   return TRet(C.widget_move((*C.widget_t)(this.handle), (C.xy_t)(x), (C.xy_t)(y)));
+}
+
+func (this TWidget) MoveToCenter() TRet {
+  return TRet(C.widget_move_to_center((*C.widget_t)(this.handle)));
 }
 
 func (this TWidget) Resize(w int, h int) TRet {
@@ -6955,6 +7044,7 @@ const (
   WIDGET_PROP_LAYOUT_H string = C.WIDGET_PROP_LAYOUT_H
   WIDGET_PROP_VIRTUAL_W string = C.WIDGET_PROP_VIRTUAL_W
   WIDGET_PROP_VIRTUAL_H string = C.WIDGET_PROP_VIRTUAL_H
+  WIDGET_PROP_LOADING string = C.WIDGET_PROP_LOADING
   WIDGET_PROP_NAME string = C.WIDGET_PROP_NAME
   WIDGET_PROP_TYPE string = C.WIDGET_PROP_TYPE
   WIDGET_PROP_CLOSABLE string = C.WIDGET_PROP_CLOSABLE
@@ -7092,6 +7182,7 @@ const (
   WIDGET_STATE_UNCHECKED string = C.WIDGET_STATE_UNCHECKED
   WIDGET_STATE_EMPTY string = C.WIDGET_STATE_EMPTY
   WIDGET_STATE_EMPTY_FOCUS string = C.WIDGET_STATE_EMPTY_FOCUS
+  WIDGET_STATE_EMPTY_OVER string = C.WIDGET_STATE_EMPTY_OVER
   WIDGET_STATE_ERROR string = C.WIDGET_STATE_ERROR
   WIDGET_STATE_SELECTED string = C.WIDGET_STATE_SELECTED
   WIDGET_STATE_NORMAL_OF_CHECKED string = C.WIDGET_STATE_NORMAL_OF_CHECKED
