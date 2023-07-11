@@ -3368,10 +3368,6 @@ func (this TLocaleInfo) Off(id uint32) TRet {
   return TRet(C.locale_info_off((*C.locale_info_t)(this.handle), (C.uint32_t)(id)));
 }
 
-type TLocaleInfos struct {
-  handle unsafe.Pointer
-}
-
 func TLocaleInfosRef(name string) TLocaleInfo {
   aname := C.CString(name)
   defer C.free(unsafe.Pointer(aname))
@@ -3398,10 +3394,6 @@ func TLocaleInfosOff(id uint32) TRet {
 
 func TLocaleInfosReloadAll() TRet {
   return TRet(C.locale_infos_reload_all());
-}
-
-func (this TLocaleInfos) GetUnused() int {
-  return (int)((*C.locale_infos_t)(unsafe.Pointer(this.handle)).unused);
 }
 
 type TMIME_TYPE string
