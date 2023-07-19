@@ -136,6 +136,6 @@ awtk.Init(320, 480, awtk.APP_MOBILE, "demo", "res")
 
 * [AWTK Go 语言绑定笔记](docs/awtk_go.md)
 
-* [AWTK-GO 到嵌入式 linux 系统](docs/arm-linux.md)
+* [部署 AWTK-GO 到嵌入式 linux 系统](docs/arm-linux.md)
 
 > 本文以 Linux/MacOS 为例，Windows 可能会微妙差异，请酌情处理。

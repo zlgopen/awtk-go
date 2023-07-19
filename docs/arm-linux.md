@@ -27,6 +27,12 @@ git clone https://github.com/zlgopen/awtk-go.git
 #export AWTK_BIN=${PWD}/../awtk-linux-fb/bin
 ```
 
+* 让环境变量生效
+
+```
+source env.sh
+```
+
 * 编译
 
 ```
