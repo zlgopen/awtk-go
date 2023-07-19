@@ -2,3 +2,6 @@ res
 bin
 lib
 go.sum
+temp
+release
+release.tgz

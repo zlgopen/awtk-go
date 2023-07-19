@@ -2,7 +2,7 @@
 export AWTK_ROOT=${PWD}/../awtk
 export AWTK_BIN=${PWD}/../awtk/bin
 
-#arm-linux-fb
+#for arm-linux-fb
 #export GOOS=linux
 #export GOARCH=arm
 #export CC=arm-linux-gnueabihf-gcc
