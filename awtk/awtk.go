@@ -1599,6 +1599,10 @@ func (this TEdit) GetActionText() string {
   return C.GoString((*C.edit_t)(unsafe.Pointer(this.handle)).action_text);
 }
 
+func (this TEdit) GetValidator() string {
+  return C.GoString((*C.edit_t)(unsafe.Pointer(this.handle)).validator);
+}
+
 func (this TEdit) GetKeyboard() string {
   return C.GoString((*C.edit_t)(unsafe.Pointer(this.handle)).keyboard);
 }
@@ -1778,9 +1782,6 @@ const (
   EVT_RESIZE TEventType = C.EVT_RESIZE
   EVT_WILL_MOVE_RESIZE TEventType = C.EVT_WILL_MOVE_RESIZE
   EVT_MOVE_RESIZE TEventType = C.EVT_MOVE_RESIZE
-  EVT_VALUE_WILL_CHANGE TEventType = C.EVT_VALUE_WILL_CHANGE
-  EVT_VALUE_CHANGED TEventType = C.EVT_VALUE_CHANGED
-  EVT_VALUE_CHANGING TEventType = C.EVT_VALUE_CHANGING
   EVT_PAINT TEventType = C.EVT_PAINT
   EVT_BEFORE_PAINT TEventType = C.EVT_BEFORE_PAINT
   EVT_AFTER_PAINT TEventType = C.EVT_AFTER_PAINT
@@ -1845,6 +1846,8 @@ const (
   EVT_DROP_FILE TEventType = C.EVT_DROP_FILE
   EVT_LOCALE_INFOS_LOAD_INFO TEventType = C.EVT_LOCALE_INFOS_LOAD_INFO
   EVT_LOCALE_INFOS_UNLOAD_INFO TEventType = C.EVT_LOCALE_INFOS_UNLOAD_INFO
+  EVT_ACTIVATED TEventType = C.EVT_ACTIVATED
+  EVT_UNACTIVATED TEventType = C.EVT_UNACTIVATED
   EVT_REQ_START TEventType = C.EVT_REQ_START
   EVT_USER_START TEventType = C.EVT_USER_START
   EVT_NONE TEventType = C.EVT_NONE
@@ -1860,6 +1863,10 @@ const (
   EVT_DONE TEventType = C.EVT_DONE
   EVT_ERROR TEventType = C.EVT_ERROR
   EVT_DESTROY TEventType = C.EVT_DESTROY
+  EVT_VALUE_WILL_CHANGE TEventType = C.EVT_VALUE_WILL_CHANGE
+  EVT_VALUE_CHANGED TEventType = C.EVT_VALUE_CHANGED
+  EVT_VALUE_CHANGING TEventType = C.EVT_VALUE_CHANGING
+  EVT_LOG_MESSAGE TEventType = C.EVT_LOG_MESSAGE
 )
 func TExtWidgetsInit() TRet {
   return TRet(C.tk_ext_widgets_init());
@@ -2203,6 +2210,10 @@ func Quit() TRet {
   return TRet(C.tk_quit());
 }
 
+func QuitEx(delay_ms uint32) TRet {
+  return TRet(C.tk_quit_ex((C.uint32_t)(delay_ms)));
+}
+
 func GetPointerX() int32 {
   return (int32)(C.tk_get_pointer_x());
 }
@@ -2289,6 +2300,10 @@ func TGroupBoxCreate(parent TWidget, x int, y int, w int, h int) TWidget {
   retObj := TGroupBox{}
   retObj.handle = unsafe.Pointer(C.group_box_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
   return retObj.TWidget
+}
+
+func (this TGroupBox) SetValue(value uint32) TRet {
+  return TRet(C.group_box_set_value((*C.widget_t)(this.handle), (C.uint32_t)(value)));
 }
 
 func TGroupBoxCast(widget TWidget) TGroupBox {
@@ -3124,6 +3139,10 @@ func (this TLabel) SetWordWrap(word_wrap bool) TRet {
   return TRet(C.label_set_word_wrap((*C.widget_t)(this.handle), (C.bool_t)(word_wrap)));
 }
 
+func (this TLabel) SetEllipses(ellipses bool) TRet {
+  return TRet(C.label_set_ellipses((*C.widget_t)(this.handle), (C.bool_t)(ellipses)));
+}
+
 func (this TLabel) ResizeToContent(min_w uint32, max_w uint32, min_h uint32, max_h uint32) TRet {
   return TRet(C.label_resize_to_content((*C.widget_t)(this.handle), (C.uint32_t)(min_w), (C.uint32_t)(max_w), (C.uint32_t)(min_h), (C.uint32_t)(max_h)));
 }
@@ -3144,6 +3163,10 @@ func (this TLabel) GetLineWrap() bool {
 
 func (this TLabel) GetWordWrap() bool {
   return (bool)((*C.label_t)(unsafe.Pointer(this.handle)).word_wrap);
+}
+
+func (this TLabel) GetEllipses() bool {
+  return (bool)((*C.label_t)(unsafe.Pointer(this.handle)).ellipses);
 }
 
 func (this TLabel) GetMaxW() int32 {
@@ -3394,6 +3417,16 @@ func TLocaleInfosOff(id uint32) TRet {
 
 func TLocaleInfosReloadAll() TRet {
   return TRet(C.locale_infos_reload_all());
+}
+
+type TLogMessageEvent struct {
+  TEvent
+}
+
+func TLogMessageEventCast(event TEvent) TLogMessageEvent {
+  retObj := TLogMessageEvent{}
+  retObj.handle = unsafe.Pointer(C.log_message_event_cast((*C.event_t)(event.handle)))
+  return retObj
 }
 
 type TMIME_TYPE string
@@ -4272,10 +4305,15 @@ func (this TObjectDefault) ClearProps() TRet {
   return TRet(C.object_default_clear_props((*C.object_t)(this.handle)));
 }
 
+func (this TObjectDefault) SetKeepPropType(keep_prop_type bool) TRet {
+  return TRet(C.object_default_set_keep_prop_type((*C.object_t)(this.handle), (C.bool_t)(keep_prop_type)));
+}
+
 type TObjectProp string
 const (
   OBJECT_PROP_SIZE string = C.OBJECT_PROP_SIZE
   OBJECT_PROP_CHECKED string = C.OBJECT_PROP_CHECKED
+  OBJECT_PROP_SELECTED_INDEX string = C.OBJECT_PROP_SELECTED_INDEX
 )
 type TOffsetChangeEvent struct {
   TEvent
@@ -4754,6 +4792,8 @@ const (
   RET_EOS TRet = C.RET_EOS
   RET_NOT_MODIFIED TRet = C.RET_NOT_MODIFIED
   RET_NO_PERMISSION TRet = C.RET_NO_PERMISSION
+  RET_INVALID_ADDR TRet = C.RET_INVALID_ADDR
+  RET_EXCEED_RANGE TRet = C.RET_EXCEED_RANGE
   RET_MAX_NR TRet = C.RET_MAX_NR
 )
 type TRichText struct {
@@ -5953,6 +5993,10 @@ func (this TTextSelector) SetMaskAreaScale(mask_area_scale float64) TRet {
   return TRet(C.text_selector_set_mask_area_scale((*C.widget_t)(this.handle), (C.float_t)(mask_area_scale)));
 }
 
+func (this TTextSelector) SetEllipses(ellipses bool) TRet {
+  return TRet(C.text_selector_set_ellipses((*C.widget_t)(this.handle), (C.bool_t)(ellipses)));
+}
+
 func (this TTextSelector) GetVisibleNr() uint32 {
   return (uint32)((*C.text_selector_t)(unsafe.Pointer(this.handle)).visible_nr);
 }
@@ -5983,6 +6027,10 @@ func (this TTextSelector) GetLoopOptions() bool {
 
 func (this TTextSelector) GetEnableValueAnimator() bool {
   return (bool)((*C.text_selector_t)(unsafe.Pointer(this.handle)).enable_value_animator);
+}
+
+func (this TTextSelector) GetEllipses() bool {
+  return (bool)((*C.text_selector_t)(unsafe.Pointer(this.handle)).ellipses);
 }
 
 func (this TTextSelector) GetMaskEasing() TEasingType {
@@ -6375,6 +6423,14 @@ func (this TValue) StrEx(buff string, size uint32) string {
 
 func (this TValue) IsNull() bool {
   return (bool)(C.value_is_null((*C.value_t)(this.handle)));
+}
+
+func (this TValue) Equal(other TValue) bool {
+  return (bool)(C.value_equal((*C.value_t)(this.handle), (*C.value_t)(other.handle)));
+}
+
+func (this TValue) Int() int {
+  return (int)(C.value_int((*C.value_t)(this.handle)));
 }
 
 func (this TValue) SetInt(value int32) TValue {
@@ -6980,6 +7036,10 @@ func (this TWidget) IsSupportHighlighter() bool {
   return (bool)(C.widget_is_support_highlighter((*C.widget_t)(this.handle)));
 }
 
+func (this TWidget) HasHighlighter() bool {
+  return (bool)(C.widget_has_highlighter((*C.widget_t)(this.handle)));
+}
+
 func (this TWidget) UseStyle(style string) TRet {
   astyle := C.CString(style)
   defer C.free(unsafe.Pointer(astyle))
@@ -7231,6 +7291,18 @@ func (this TWidget) Off(id uint32) TRet {
 
 func (this TWidget) InvalidateForce(r TRect) TRet {
   return TRet(C.widget_invalidate_force((*C.widget_t)(this.handle), (*C.rect_t)(r.handle)));
+}
+
+func (this TWidget) GetProp(name string, v TValue) TRet {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return TRet(C.widget_get_prop((*C.widget_t)(this.handle), aname, (*C.value_t)(v.handle)));
+}
+
+func (this TWidget) SetProp(name string, v TValue) TRet {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return TRet(C.widget_set_prop((*C.widget_t)(this.handle), aname, (*C.value_t)(v.handle)));
 }
 
 func (this TWidget) SetProps(params string) TRet {
@@ -7565,6 +7637,26 @@ func (this TWidget) GetParent() TWidget {
   return retObj
 }
 
+type TWidgetAnimatorEvent struct {
+  TEvent
+}
+
+func TWidgetAnimatorEventCast(event TEvent) TWidgetAnimatorEvent {
+  retObj := TWidgetAnimatorEvent{}
+  retObj.handle = unsafe.Pointer(C.widget_animator_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func (this TWidgetAnimatorEvent) GetWidget() TWidget {
+  retObj := TWidget{}
+  retObj.handle = unsafe.Pointer((*C.widget_animator_event_t)(unsafe.Pointer(this.handle)).widget)
+  return retObj
+}
+
+func (this TWidgetAnimatorEvent) GetAnimator() unsafe.Pointer {
+  return (unsafe.Pointer)((*C.widget_animator_event_t)(unsafe.Pointer(this.handle)).animator);
+}
+
 type TWidgetCursor string
 const (
   WIDGET_CURSOR_DEFAULT string = C.WIDGET_CURSOR_DEFAULT
@@ -7630,6 +7722,7 @@ const (
   WIDGET_PROP_LENGTH string = C.WIDGET_PROP_LENGTH
   WIDGET_PROP_LINE_WRAP string = C.WIDGET_PROP_LINE_WRAP
   WIDGET_PROP_WORD_WRAP string = C.WIDGET_PROP_WORD_WRAP
+  WIDGET_PROP_ELLIPSES string = C.WIDGET_PROP_ELLIPSES
   WIDGET_PROP_TEXT string = C.WIDGET_PROP_TEXT
   WIDGET_PROP_TR_TEXT string = C.WIDGET_PROP_TR_TEXT
   WIDGET_PROP_STYLE string = C.WIDGET_PROP_STYLE
@@ -7754,6 +7847,10 @@ const (
   WIDGET_PROP_ANIMATE_PREFIX string = C.WIDGET_PROP_ANIMATE_PREFIX
   WIDGET_PROP_ANIMATE_ANIMATING_TIME string = C.WIDGET_PROP_ANIMATE_ANIMATING_TIME
   WIDGET_PROP_DIRTY_RECT string = C.WIDGET_PROP_DIRTY_RECT
+  WIDGET_PROP_SCREEN_SAVER_TIME string = C.WIDGET_PROP_SCREEN_SAVER_TIME
+  WIDGET_PROP_SHOW_FPS string = C.WIDGET_PROP_SHOW_FPS
+  WIDGET_PROP_MAX_FPS string = C.WIDGET_PROP_MAX_FPS
+  WIDGET_PROP_VALIDATOR string = C.WIDGET_PROP_VALIDATOR
 )
 type TWidgetState string
 const (
@@ -8101,6 +8198,10 @@ func (this TWindowManager) BackTo(target string) TRet {
 
 func (this TWindowManager) Resize(w int, h int) TRet {
   return TRet(C.window_manager_resize((*C.widget_t)(this.handle), (C.wh_t)(w), (C.wh_t)(h)));
+}
+
+func (this TWindowManager) SetFullscreen(fullscreen bool) TRet {
+  return TRet(C.window_manager_set_fullscreen((*C.widget_t)(this.handle), (C.bool_t)(fullscreen)));
 }
 
 func (this TWindowManager) CloseAll() TRet {
