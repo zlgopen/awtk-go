@@ -37,6 +37,12 @@ python ./scripts/update_res.py all
 source env.sh
 ```
 
+> 安装依赖的库
+
+```
+go mod download github.com/mattn/go-pointer
+```
+
 ```
 cd awtk 
 go build
