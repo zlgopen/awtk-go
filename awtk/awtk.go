@@ -354,12 +354,16 @@ func (this TButton) GetEnablePreview() bool {
   return (bool)((*C.button_t)(unsafe.Pointer(this.handle)).enable_preview);
 }
 
-func (this TButton) GetLongPressTime() uint32 {
-  return (uint32)((*C.button_t)(unsafe.Pointer(this.handle)).long_press_time);
+func (this TButton) GetIsAcceptStatus() bool {
+  return (bool)((*C.button_t)(unsafe.Pointer(this.handle)).is_accept_status);
 }
 
 func (this TButton) GetPressed() bool {
   return (bool)((*C.button_t)(unsafe.Pointer(this.handle)).pressed);
+}
+
+func (this TButton) GetLongPressTime() uint32 {
+  return (uint32)((*C.button_t)(unsafe.Pointer(this.handle)).long_press_time);
 }
 
 type TButtonGroup struct {
@@ -422,6 +426,10 @@ func (this TCandidates) SetAutoHide(auto_hide bool) TRet {
   return TRet(C.candidates_set_auto_hide((*C.widget_t)(this.handle), (C.bool_t)(auto_hide)));
 }
 
+func (this TCandidates) SetVisibleNum(visible_num uint32) TRet {
+  return TRet(C.candidates_set_visible_num((*C.widget_t)(this.handle), (C.uint32_t)(visible_num)));
+}
+
 func (this TCandidates) SetButtonStyle(button_style string) TRet {
   abutton_style := C.CString(button_style)
   defer C.free(unsafe.Pointer(abutton_style))
@@ -446,6 +454,10 @@ func (this TCandidates) GetButtonStyle() string {
 
 func (this TCandidates) GetEnablePreview() bool {
   return (bool)((*C.candidates_t)(unsafe.Pointer(this.handle)).enable_preview);
+}
+
+func (this TCandidates) GetVisibleNum() uint32 {
+  return (uint32)((*C.candidates_t)(unsafe.Pointer(this.handle)).visible_num);
 }
 
 type TCanvas struct {
@@ -1667,6 +1679,52 @@ func (this TEdit) GetFocusNextWhenEnter() bool {
   return (bool)((*C.edit_t)(unsafe.Pointer(this.handle)).focus_next_when_enter);
 }
 
+type TEditEx struct {
+  TEdit
+}
+
+func TEditExCreate(parent TWidget, x int, y int, w int, h int) TWidget {
+  retObj := TEditEx{}
+  retObj.handle = unsafe.Pointer(C.edit_ex_create((*C.widget_t)(parent.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)))
+  return retObj.TWidget
+}
+
+func (this TEditEx) SetSuggestWords(suggest_words TObject) TRet {
+  return TRet(C.edit_ex_set_suggest_words((*C.widget_t)(this.handle), (*C.object_t)(suggest_words.handle)));
+}
+
+func (this TEditEx) SetSuggestWordsItemFormats(formats string) TRet {
+  aformats := C.CString(formats)
+  defer C.free(unsafe.Pointer(aformats))
+  return TRet(C.edit_ex_set_suggest_words_item_formats((*C.widget_t)(this.handle), aformats));
+}
+
+func (this TEditEx) SetSuggestWordsInputName(name string) TRet {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return TRet(C.edit_ex_set_suggest_words_input_name((*C.widget_t)(this.handle), aname));
+}
+
+func TEditExCast(widget TWidget) TEditEx {
+  retObj := TEditEx{}
+  retObj.handle = unsafe.Pointer(C.edit_ex_cast((*C.widget_t)(widget.handle)))
+  return retObj
+}
+
+func (this TEditEx) GetSuggestWords() TObject {
+  retObj := TObject{}
+  retObj.handle = unsafe.Pointer((*C.edit_ex_t)(unsafe.Pointer(this.handle)).suggest_words)
+  return retObj
+}
+
+func (this TEditEx) GetSuggestWordsItemFormats() string {
+  return C.GoString((*C.edit_ex_t)(unsafe.Pointer(this.handle)).suggest_words_item_formats);
+}
+
+func (this TEditEx) GetSuggestWordsInputName() string {
+  return C.GoString((*C.edit_ex_t)(unsafe.Pointer(this.handle)).suggest_words_input_name);
+}
+
 type TEmitter struct {
   handle unsafe.Pointer
 }
@@ -1879,6 +1937,9 @@ const (
   EVT_ACTIVATED TEventType = C.EVT_ACTIVATED
   EVT_UNACTIVATED TEventType = C.EVT_UNACTIVATED
   EVT_UI_LOAD TEventType = C.EVT_UI_LOAD
+  EVT_TOUCH_DOWN TEventType = C.EVT_TOUCH_DOWN
+  EVT_TOUCH_MOVE TEventType = C.EVT_TOUCH_MOVE
+  EVT_TOUCH_UP TEventType = C.EVT_TOUCH_UP
   EVT_REQ_START TEventType = C.EVT_REQ_START
   EVT_USER_START TEventType = C.EVT_USER_START
   EVT_NONE TEventType = C.EVT_NONE
@@ -2477,10 +2538,6 @@ func (this THscrollLabel) GetLoopIntervalDistance() int32 {
 
 func TIdleRemove(idle_id uint32) TRet {
   return TRet(C.idle_remove((C.uint32_t)(idle_id)));
-}
-
-func TIdleRemoveAllByCtx(ctx unsafe.Pointer) TRet {
-  return TRet(C.idle_remove_all_by_ctx((unsafe.Pointer)(ctx)));
 }
 
 type TIdleInfo struct {
@@ -3386,6 +3443,10 @@ func (this TListView) GetFloatingScrollBar() bool {
   return (bool)((*C.list_view_t)(unsafe.Pointer(this.handle)).floating_scroll_bar);
 }
 
+func (this TListView) GetItemWidth() int32 {
+  return (int32)((*C.list_view_t)(unsafe.Pointer(this.handle)).item_width);
+}
+
 type TListViewH struct {
   TWidget
 }
@@ -3444,6 +3505,10 @@ func (this TLocaleInfo) Change(language string, country string) TRet {
 
 func (this TLocaleInfo) Off(id uint32) TRet {
   return TRet(C.locale_info_off((*C.locale_info_t)(this.handle), (C.uint32_t)(id)));
+}
+
+type TLocaleInfoXml struct {
+  TLocaleInfo
 }
 
 func TLocaleInfosRef(name string) TLocaleInfo {
@@ -3653,10 +3718,6 @@ func (this TMledit) GetCursor() uint32 {
   return (uint32)(C.mledit_get_cursor((*C.widget_t)(this.handle)));
 }
 
-func (this TMledit) SetScrollLine(scroll_line uint32) TRet {
-  return TRet(C.mledit_set_scroll_line((*C.widget_t)(this.handle), (C.uint32_t)(scroll_line)));
-}
-
 func (this TMledit) ScrollToOffset(offset uint32) TRet {
   return TRet(C.mledit_scroll_to_offset((*C.widget_t)(this.handle), (C.uint32_t)(offset)));
 }
@@ -3717,10 +3778,6 @@ func (this TMledit) GetMaxChars() uint32 {
   return (uint32)((*C.mledit_t)(unsafe.Pointer(this.handle)).max_chars);
 }
 
-func (this TMledit) GetScrollLine() uint32 {
-  return (uint32)((*C.mledit_t)(unsafe.Pointer(this.handle)).scroll_line);
-}
-
 func (this TMledit) GetOverwrite() bool {
   return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).overwrite);
 }
@@ -3743,6 +3800,14 @@ func (this TMledit) GetOpenImWhenFocused() bool {
 
 func (this TMledit) GetCloseImWhenBlured() bool {
   return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).close_im_when_blured);
+}
+
+func (this TMledit) GetAcceptReturn() bool {
+  return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).accept_return);
+}
+
+func (this TMledit) GetAcceptTab() bool {
+  return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).accept_tab);
 }
 
 type TModelEvent struct {
@@ -3806,7 +3871,7 @@ func TMutableImageCreate(parent TWidget, x int, y int, w int, h int) TWidget {
 }
 
 type TNamedValue struct {
-  handle unsafe.Pointer
+  TValue
 }
 
 func TNamedValueCreate() TNamedValue {
@@ -3913,6 +3978,10 @@ func (this TNativeWindow) ShowBorder(show bool) TRet {
   return TRet(C.native_window_show_border((*C.native_window_t)(this.handle), (C.bool_t)(show)));
 }
 
+func (this TNativeWindow) SetWindowHitTest(x int, y int, w int, h int) TRet {
+  return TRet(C.native_window_set_window_hit_test((*C.native_window_t)(this.handle), (C.xy_t)(x), (C.xy_t)(y), (C.wh_t)(w), (C.wh_t)(h)));
+}
+
 func (this TNativeWindow) SetFullscreen(fullscreen bool) TRet {
   return TRet(C.native_window_set_fullscreen((*C.native_window_t)(this.handle), (C.bool_t)(fullscreen)));
 }
@@ -3965,8 +4034,8 @@ func (this TObject) SetName(name string) TRet {
   return TRet(C.object_set_name((*C.object_t)(this.handle), aname));
 }
 
-func (this TObject) Compare(other TObject) int {
-  return (int)(C.object_compare((*C.object_t)(this.handle), (*C.object_t)(other.handle)));
+func (this TObject) Compare(other TObject) int32 {
+  return (int32)(C.object_compare((*C.object_t)(this.handle), (*C.object_t)(other.handle)));
 }
 
 func (this TObject) GetProp(name string, v TValue) TRet {
@@ -4432,6 +4501,10 @@ func (this TObjectHash) SetKeepPropType(keep_prop_type bool) TRet {
   return TRet(C.object_hash_set_keep_prop_type((*C.object_t)(this.handle), (C.bool_t)(keep_prop_type)));
 }
 
+func (this TObjectHash) SetKeepPropsOrder(keep_props_order bool) TRet {
+  return TRet(C.object_hash_set_keep_props_order((*C.object_t)(this.handle), (C.bool_t)(keep_props_order)));
+}
+
 type TObjectProp string
 const (
   OBJECT_PROP_SIZE string = C.OBJECT_PROP_SIZE
@@ -4608,6 +4681,10 @@ func (this TPointerEvent) GetMenu() bool {
 
 func (this TPointerEvent) GetShift() bool {
   return (bool)((*C.pointer_event_t)(unsafe.Pointer(this.handle)).shift);
+}
+
+func (this TPointerEvent) GetFingerId() int32 {
+  return (int32)((*C.pointer_event_t)(unsafe.Pointer(this.handle)).finger_id);
 }
 
 type TPointf struct {
@@ -6023,6 +6100,10 @@ func (this TTabButtonGroup) SetDragChild(drag_child bool) TRet {
   return TRet(C.tab_button_group_set_drag_child((*C.widget_t)(this.handle), (C.bool_t)(drag_child)));
 }
 
+func (this TTabButtonGroup) RemoveIndex(index uint32) TRet {
+  return TRet(C.tab_button_group_remove_index((*C.widget_t)(this.handle), (C.uint32_t)(index)));
+}
+
 func TTabButtonGroupCast(widget TWidget) TTabButtonGroup {
   retObj := TTabButtonGroup{}
   retObj.handle = unsafe.Pointer(C.tab_button_group_cast((*C.widget_t)(widget.handle)))
@@ -6383,10 +6464,6 @@ func TTimerRemove(timer_id uint32) TRet {
   return TRet(C.timer_remove((C.uint32_t)(timer_id)));
 }
 
-func TTimerRemoveAllByCtx(ctx unsafe.Pointer) TRet {
-  return TRet(C.timer_remove_all_by_ctx((unsafe.Pointer)(ctx)));
-}
-
 func TTimerReset(timer_id uint32) TRet {
   return TRet(C.timer_reset((C.uint32_t)(timer_id)));
 }
@@ -6455,6 +6532,36 @@ func (this TTimerWidget) SetDuration(duration uint32) TRet {
 
 func (this TTimerWidget) GetDuration() uint32 {
   return (uint32)((*C.timer_widget_t)(unsafe.Pointer(this.handle)).duration);
+}
+
+type TTouchEvent struct {
+  TEvent
+}
+
+func TTouchEventCast(event TEvent) TTouchEvent {
+  retObj := TTouchEvent{}
+  retObj.handle = unsafe.Pointer(C.touch_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func (this TTouchEvent) GetTouchId() int64 {
+  return (int64)((*C.touch_event_t)(unsafe.Pointer(this.handle)).touch_id);
+}
+
+func (this TTouchEvent) GetFingerId() int64 {
+  return (int64)((*C.touch_event_t)(unsafe.Pointer(this.handle)).finger_id);
+}
+
+func (this TTouchEvent) GetX() float64 {
+  return (float64)((*C.touch_event_t)(unsafe.Pointer(this.handle)).x);
+}
+
+func (this TTouchEvent) GetY() float64 {
+  return (float64)((*C.touch_event_t)(unsafe.Pointer(this.handle)).y);
+}
+
+func (this TTouchEvent) GetPressure() float64 {
+  return (float64)((*C.touch_event_t)(unsafe.Pointer(this.handle)).pressure);
 }
 
 type TUiLoadEvent struct {
@@ -7409,6 +7516,14 @@ func (this TWidget) SetState(state string) TRet {
   return TRet(C.widget_set_state((*C.widget_t)(this.handle), astate));
 }
 
+func (this TWidget) SetSyncStateToChildren(sync_state_to_children bool) TRet {
+  return TRet(C.widget_set_sync_state_to_children((*C.widget_t)(this.handle), (C.bool_t)(sync_state_to_children)));
+}
+
+func (this TWidget) SetStateFromParentSync(state_from_parent_sync bool) TRet {
+  return TRet(C.widget_set_state_from_parent_sync((*C.widget_t)(this.handle), (C.bool_t)(state_from_parent_sync)));
+}
+
 func (this TWidget) SetOpacity(opacity uint8) TRet {
   return TRet(C.widget_set_opacity((*C.widget_t)(this.handle), (C.uint8_t)(opacity)));
 }
@@ -7513,12 +7628,6 @@ func (this TWidget) GetPropStr(name string, defval string) string {
   adefval := C.CString(defval)
   defer C.free(unsafe.Pointer(adefval))
   return C.GoString(C.widget_get_prop_str((*C.widget_t)(this.handle), aname, adefval));
-}
-
-func (this TWidget) SetPropPointer(name string, v unsafe.Pointer) TRet {
-  aname := C.CString(name)
-  defer C.free(unsafe.Pointer(aname))
-  return TRet(C.widget_set_prop_pointer((*C.widget_t)(this.handle), aname, (unsafe.Pointer)(v)));
 }
 
 func (this TWidget) GetPropPointer(name string) unsafe.Pointer {
@@ -7811,6 +7920,14 @@ func (this TWidget) GetAnimation() string {
   return C.GoString((*C.widget_t)(unsafe.Pointer(this.handle)).animation);
 }
 
+func (this TWidget) GetSyncStateToChildren() bool {
+  return (bool)((*C.widget_t)(unsafe.Pointer(this.handle)).sync_state_to_children);
+}
+
+func (this TWidget) GetStateFromParentSync() bool {
+  return (bool)((*C.widget_t)(unsafe.Pointer(this.handle)).state_from_parent_sync);
+}
+
 func (this TWidget) GetOpacity() uint8 {
   return (uint8)((*C.widget_t)(unsafe.Pointer(this.handle)).opacity);
 }
@@ -7986,6 +8103,7 @@ const (
   WIDGET_PROP_LONG_PRESS_TIME string = C.WIDGET_PROP_LONG_PRESS_TIME
   WIDGET_PROP_ENABLE_LONG_PRESS string = C.WIDGET_PROP_ENABLE_LONG_PRESS
   WIDGET_PROP_ENABLE_PREVIEW string = C.WIDGET_PROP_ENABLE_PREVIEW
+  WIDGET_PROP_IS_ACCEPT_STATUS string = C.WIDGET_PROP_IS_ACCEPT_STATUS
   WIDGET_PROP_CLICK_THROUGH string = C.WIDGET_PROP_CLICK_THROUGH
   WIDGET_PROP_ANIMATABLE string = C.WIDGET_PROP_ANIMATABLE
   WIDGET_PROP_AUTO_HIDE string = C.WIDGET_PROP_AUTO_HIDE
@@ -8029,6 +8147,10 @@ const (
   WIDGET_PROP_MOVE_FOCUS_DOWN_KEY string = C.WIDGET_PROP_MOVE_FOCUS_DOWN_KEY
   WIDGET_PROP_MOVE_FOCUS_LEFT_KEY string = C.WIDGET_PROP_MOVE_FOCUS_LEFT_KEY
   WIDGET_PROP_MOVE_FOCUS_RIGHT_KEY string = C.WIDGET_PROP_MOVE_FOCUS_RIGHT_KEY
+  WIDGET_PROP_ACCEPT_BUTTON string = C.WIDGET_PROP_ACCEPT_BUTTON
+  WIDGET_PROP_CANCEL_BUTTON string = C.WIDGET_PROP_CANCEL_BUTTON
+  WIDGET_PROP_ACCEPT_RETRUN string = C.WIDGET_PROP_ACCEPT_RETRUN
+  WIDGET_PROP_ACCEPT_TAB string = C.WIDGET_PROP_ACCEPT_TAB
   WIDGET_PROP_ROWS string = C.WIDGET_PROP_ROWS
   WIDGET_PROP_SHOW_GRID string = C.WIDGET_PROP_SHOW_GRID
   WIDGET_PROP_COLUMNS_DEFINITION string = C.WIDGET_PROP_COLUMNS_DEFINITION
@@ -8041,6 +8163,8 @@ const (
   WIDGET_PROP_SHOW_FPS string = C.WIDGET_PROP_SHOW_FPS
   WIDGET_PROP_MAX_FPS string = C.WIDGET_PROP_MAX_FPS
   WIDGET_PROP_VALIDATOR string = C.WIDGET_PROP_VALIDATOR
+  WIDGET_PROP_SYNC_STATE_TO_CHILDREN string = C.WIDGET_PROP_SYNC_STATE_TO_CHILDREN
+  WIDGET_PROP_STATE_FROM_PARENT_SYNC string = C.WIDGET_PROP_STATE_FROM_PARENT_SYNC
 )
 type TWidgetState string
 const (
@@ -8269,6 +8393,14 @@ func (this TWindowBase) GetMoveFocusLeftKey() string {
 
 func (this TWindowBase) GetMoveFocusRightKey() string {
   return C.GoString((*C.window_base_t)(unsafe.Pointer(this.handle)).move_focus_right_key);
+}
+
+func (this TWindowBase) GetAcceptButton() string {
+  return C.GoString((*C.window_base_t)(unsafe.Pointer(this.handle)).accept_button);
+}
+
+func (this TWindowBase) GetCancelButton() string {
+  return C.GoString((*C.window_base_t)(unsafe.Pointer(this.handle)).cancel_button);
 }
 
 func (this TWindowBase) GetAppletName() string {
