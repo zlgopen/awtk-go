@@ -4505,6 +4505,12 @@ func (this TObjectHash) SetKeepPropsOrder(keep_props_order bool) TRet {
   return TRet(C.object_hash_set_keep_props_order((*C.object_t)(this.handle), (C.bool_t)(keep_props_order)));
 }
 
+type TObjectLife int
+const (
+  OBJECT_LIFE_NONE TObjectLife = C.OBJECT_LIFE_NONE
+  OBJECT_LIFE_OWN TObjectLife = C.OBJECT_LIFE_OWN
+  OBJECT_LIFE_HOLD TObjectLife = C.OBJECT_LIFE_HOLD
+)
 type TObjectProp string
 const (
   OBJECT_PROP_SIZE string = C.OBJECT_PROP_SIZE
@@ -5206,6 +5212,10 @@ func (this TScrollView) SetVirtualW(w int) TRet {
 
 func (this TScrollView) SetVirtualH(h int) TRet {
   return TRet(C.scroll_view_set_virtual_h((*C.widget_t)(this.handle), (C.wh_t)(h)));
+}
+
+func (this TScrollView) FixOffset() TRet {
+  return TRet(C.scroll_view_fix_offset((*C.widget_t)(this.handle)));
 }
 
 func (this TScrollView) SetXslidable(xslidable bool) TRet {
@@ -6893,8 +6903,8 @@ func (this TVgcanvas) ClosePath() TRet {
   return TRet(C.vgcanvas_close_path((*C.vgcanvas_t)(this.handle)));
 }
 
-func (this TVgcanvas) PathWinding(dir bool) TRet {
-  return TRet(C.vgcanvas_path_winding((*C.vgcanvas_t)(this.handle), (C.bool_t)(dir)));
+func (this TVgcanvas) SetFillMode(fill_mode TVgcanvasFillMode) TRet {
+  return TRet(C.vgcanvas_set_fill_mode((*C.vgcanvas_t)(this.handle), (C.vgcanvas_fill_mode_t)(fill_mode)));
 }
 
 func (this TVgcanvas) Rotate(rad float64) TRet {
@@ -7095,6 +7105,12 @@ func (this TVgcanvas) GetTextBaseline() string {
   return C.GoString((*C.vgcanvas_t)(unsafe.Pointer(this.handle)).text_baseline);
 }
 
+type TVgcanvasFillMode int
+const (
+  VGCANVAS_FILL_MODE_ALL_FILL TVgcanvasFillMode = C.VGCANVAS_FILL_MODE_ALL_FILL
+  VGCANVAS_FILL_MODE_NON_ZERO TVgcanvasFillMode = C.VGCANVAS_FILL_MODE_NON_ZERO
+  VGCANVAS_FILL_MODE_EVEN_ODD TVgcanvasFillMode = C.VGCANVAS_FILL_MODE_EVEN_ODD
+)
 type TVgcanvasLineCap string
 const (
   VGCANVAS_LINE_CAP_ROUND string = C.VGCANVAS_LINE_CAP_ROUND
@@ -7628,6 +7644,12 @@ func (this TWidget) GetPropStr(name string, defval string) string {
   adefval := C.CString(defval)
   defer C.free(unsafe.Pointer(adefval))
   return C.GoString(C.widget_get_prop_str((*C.widget_t)(this.handle), aname, adefval));
+}
+
+func (this TWidget) SetPropPointer(name string, v unsafe.Pointer) TRet {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return TRet(C.widget_set_prop_pointer((*C.widget_t)(this.handle), aname, (unsafe.Pointer)(v)));
 }
 
 func (this TWidget) GetPropPointer(name string) unsafe.Pointer {
