@@ -4,6 +4,7 @@ package awtk
 #include <awtk.h>
 #include <tkc/rlog.h>
 #include <conf_io/app_conf.h>
+#include <conf_io/conf_utils.h>
 #include "../res/assets.inc"
 */
 import "C"
@@ -1031,6 +1032,14 @@ func (this TComboBoxItem) GetChecked() bool {
   return (bool)((*C.combo_box_item_t)(unsafe.Pointer(this.handle)).checked);
 }
 
+func TConfUtilsObjectLoadConf(obj TObject, url string, typex string) TRet {
+  aurl := C.CString(url)
+  defer C.free(unsafe.Pointer(aurl))
+  atypex := C.CString(typex)
+  defer C.free(unsafe.Pointer(atypex))
+  return TRet(C.object_load_conf((*C.object_t)(obj.handle), aurl, atypex));
+}
+
 type TDateTime struct {
   handle unsafe.Pointer
 }
@@ -1501,6 +1510,10 @@ func (this TEdit) GetInt() int32 {
   return (int32)(C.edit_get_int((*C.widget_t)(this.handle)));
 }
 
+func (this TEdit) GetInt64() int64 {
+  return (int64)(C.edit_get_int64((*C.widget_t)(this.handle)));
+}
+
 func (this TEdit) GetDouble() float64 {
   return (float64)(C.edit_get_double((*C.widget_t)(this.handle)));
 }
@@ -1689,6 +1702,10 @@ func TEditExCreate(parent TWidget, x int, y int, w int, h int) TWidget {
   return retObj.TWidget
 }
 
+func (this TEditEx) SetMultiline(multiline bool) TRet {
+  return TRet(C.edit_ex_set_multiline((*C.widget_t)(this.handle), (C.bool_t)(multiline)));
+}
+
 func (this TEditEx) SetSuggestWords(suggest_words TObject) TRet {
   return TRet(C.edit_ex_set_suggest_words((*C.widget_t)(this.handle), (*C.object_t)(suggest_words.handle)));
 }
@@ -1703,6 +1720,10 @@ func (this TEditEx) SetSuggestWordsInputName(name string) TRet {
   aname := C.CString(name)
   defer C.free(unsafe.Pointer(aname))
   return TRet(C.edit_ex_set_suggest_words_input_name((*C.widget_t)(this.handle), aname));
+}
+
+func (this TEditEx) UpdateSuggestWordsPopup() TRet {
+  return TRet(C.edit_ex_update_suggest_words_popup((*C.widget_t)(this.handle)));
 }
 
 func TEditExCast(widget TWidget) TEditEx {
@@ -1725,6 +1746,30 @@ func (this TEditEx) GetSuggestWordsInputName() string {
   return C.GoString((*C.edit_ex_t)(unsafe.Pointer(this.handle)).suggest_words_input_name);
 }
 
+func (this TEditEx) GetIsSelectSuggestWord() bool {
+  return (bool)((*C.edit_ex_t)(unsafe.Pointer(this.handle)).is_select_suggest_word);
+}
+
+func (this TEditEx) GetMultiline() bool {
+  return (bool)((*C.edit_ex_t)(unsafe.Pointer(this.handle)).multiline);
+}
+
+type TEditExProp string
+const (
+  EDIT_EX_PROP_MULTILINE string = C.EDIT_EX_PROP_MULTILINE
+  EDIT_EX_PROP_SUGGEST_WORDS string = C.EDIT_EX_PROP_SUGGEST_WORDS
+  EDIT_EX_PROP_SUGGEST_WORDS_UI_PROPS string = C.EDIT_EX_PROP_SUGGEST_WORDS_UI_PROPS
+  EDIT_EX_PROP_SUGGEST_WORDS_ITEM_ODD_STYLE string = C.EDIT_EX_PROP_SUGGEST_WORDS_ITEM_ODD_STYLE
+  EDIT_EX_PROP_SUGGEST_WORDS_ITEM_EVEN_STYLE string = C.EDIT_EX_PROP_SUGGEST_WORDS_ITEM_EVEN_STYLE
+  EDIT_EX_PROP_SUGGEST_WORDS_ITEM_SEPARATE_STYLE string = C.EDIT_EX_PROP_SUGGEST_WORDS_ITEM_SEPARATE_STYLE
+  EDIT_EX_PROP_SUGGEST_WORDS_INPUT_NAME string = C.EDIT_EX_PROP_SUGGEST_WORDS_INPUT_NAME
+  EDIT_EX_PROP_IS_SELECT_SUGGEST_WORD string = C.EDIT_EX_PROP_IS_SELECT_SUGGEST_WORD
+  EDIT_EX_PROP_SUGGEST_WORDS_ITEM_FORMATS string = C.EDIT_EX_PROP_SUGGEST_WORDS_ITEM_FORMATS
+)
+type TEditExSuggestWordsProp string
+const (
+  EDIT_EX_SUGGEST_WORDS_PROP_FORMAT_NAME string = C.EDIT_EX_SUGGEST_WORDS_PROP_FORMAT_NAME
+)
 type TEmitter struct {
   handle unsafe.Pointer
 }
@@ -1845,15 +1890,17 @@ const (
   EVT_POINTER_MOVE_BEFORE_CHILDREN TEventType = C.EVT_POINTER_MOVE_BEFORE_CHILDREN
   EVT_POINTER_UP TEventType = C.EVT_POINTER_UP
   EVT_POINTER_UP_BEFORE_CHILDREN TEventType = C.EVT_POINTER_UP_BEFORE_CHILDREN
-  EVT_WHEEL TEventType = C.EVT_WHEEL
-  EVT_WHEEL_BEFORE_CHILDREN TEventType = C.EVT_WHEEL_BEFORE_CHILDREN
   EVT_POINTER_DOWN_ABORT TEventType = C.EVT_POINTER_DOWN_ABORT
   EVT_CONTEXT_MENU TEventType = C.EVT_CONTEXT_MENU
+  EVT_MOUSE_EXTRA_BUTTON_DOWN TEventType = C.EVT_MOUSE_EXTRA_BUTTON_DOWN
+  EVT_MOUSE_EXTRA_BUTTON_UP TEventType = C.EVT_MOUSE_EXTRA_BUTTON_UP
   EVT_POINTER_ENTER TEventType = C.EVT_POINTER_ENTER
   EVT_POINTER_LEAVE TEventType = C.EVT_POINTER_LEAVE
   EVT_LONG_PRESS TEventType = C.EVT_LONG_PRESS
   EVT_CLICK TEventType = C.EVT_CLICK
   EVT_DOUBLE_CLICK TEventType = C.EVT_DOUBLE_CLICK
+  EVT_WHEEL TEventType = C.EVT_WHEEL
+  EVT_WHEEL_BEFORE_CHILDREN TEventType = C.EVT_WHEEL_BEFORE_CHILDREN
   EVT_FOCUS TEventType = C.EVT_FOCUS
   EVT_BLUR TEventType = C.EVT_BLUR
   EVT_KEY_DOWN TEventType = C.EVT_KEY_DOWN
@@ -2280,6 +2327,10 @@ func (this TGifImage) SetLoop(loop uint32) TRet {
   return TRet(C.gif_image_set_loop((*C.widget_t)(this.handle), (C.uint32_t)(loop)));
 }
 
+func (this TGifImage) SetPartBufferLoadMode(part_buffer_load_mode bool) TRet {
+  return TRet(C.gif_image_set_part_buffer_load_mode((*C.widget_t)(this.handle), (C.bool_t)(part_buffer_load_mode)));
+}
+
 func TGifImageCast(widget TWidget) TGifImage {
   retObj := TGifImage{}
   retObj.handle = unsafe.Pointer(C.gif_image_cast((*C.widget_t)(widget.handle)))
@@ -2288,6 +2339,10 @@ func TGifImageCast(widget TWidget) TGifImage {
 
 func (this TGifImage) GetLoop() uint32 {
   return (uint32)((*C.gif_image_t)(unsafe.Pointer(this.handle)).loop);
+}
+
+func (this TGifImage) GetPartBufferLoadMode() bool {
+  return (bool)((*C.gif_image_t)(unsafe.Pointer(this.handle)).part_buffer_load_mode);
 }
 
 func PreInit() TRet {
@@ -3539,6 +3594,14 @@ func TLocaleInfosReloadAll() TRet {
   return TRet(C.locale_infos_reload_all());
 }
 
+func TLogGetLogLevel() TTkLogLevel {
+  return TTkLogLevel(C.log_get_log_level());
+}
+
+func TLogSetLogLevel(log_level TTkLogLevel) TRet {
+  return TRet(C.log_set_log_level((C.tk_log_level_t)(log_level)));
+}
+
 type TLogMessageEvent struct {
   TEvent
 }
@@ -3746,6 +3809,26 @@ func (this TMledit) GetCurrentRowIndex() uint32 {
   return (uint32)(C.mledit_get_current_row_index((*C.widget_t)(this.handle)));
 }
 
+func (this TMledit) GetStartLineIndex() int32 {
+  return (int32)(C.mledit_get_start_line_index((*C.widget_t)(this.handle)));
+}
+
+func (this TMledit) GetStartRowIndex() int32 {
+  return (int32)(C.mledit_get_start_row_index((*C.widget_t)(this.handle)));
+}
+
+func (this TMledit) GetLineAt(offset uint32) int32 {
+  return (int32)(C.mledit_get_line_at((*C.widget_t)(this.handle), (C.uint32_t)(offset)));
+}
+
+func (this TMledit) GetRowAt(offset uint32) int32 {
+  return (int32)(C.mledit_get_row_at((*C.widget_t)(this.handle), (C.uint32_t)(offset)));
+}
+
+func (this TMledit) GetRowOfLine(line uint32) int32 {
+  return (int32)(C.mledit_get_row_of_line((*C.widget_t)(this.handle), (C.uint32_t)(line)));
+}
+
 func (this TMledit) InsertText(offset uint32, text string) TRet {
   atext := C.CString(text)
   defer C.free(unsafe.Pointer(atext))
@@ -3808,6 +3891,10 @@ func (this TMledit) GetAcceptReturn() bool {
 
 func (this TMledit) GetAcceptTab() bool {
   return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).accept_tab);
+}
+
+func (this TMledit) GetAutoAdjustHeight() bool {
+  return (bool)((*C.mledit_t)(unsafe.Pointer(this.handle)).auto_adjust_height);
 }
 
 type TModelEvent struct {
@@ -4378,12 +4465,12 @@ func (this TObject) ClearProps() TRet {
   return TRet(C.object_clear_props((*C.object_t)(this.handle)));
 }
 
-func (this TObject) GetRefCount() int32 {
-  return (int32)((*C.object_t)(unsafe.Pointer(this.handle)).ref_count);
-}
-
 func (this TObject) GetName() string {
   return C.GoString((*C.object_t)(unsafe.Pointer(this.handle)).name);
+}
+
+func (this TObject) GetRefCount() int32 {
+  return (int32)((*C.object_t)(unsafe.Pointer(this.handle)).ref_count);
 }
 
 type TObjectArray struct {
@@ -4448,6 +4535,8 @@ const (
   OBJECT_CMD_ADD string = C.OBJECT_CMD_ADD
   OBJECT_CMD_DETAIL string = C.OBJECT_CMD_DETAIL
   OBJECT_CMD_EDIT string = C.OBJECT_CMD_EDIT
+  OBJECT_CMD_EXEC string = C.OBJECT_CMD_EXEC
+  OBJECT_CMD_UNDO string = C.OBJECT_CMD_UNDO
 )
 type TObjectDefault struct {
   TObject
@@ -4481,6 +4570,106 @@ func (this TObjectDefault) SetNameCaseInsensitive(name_case_insensitive bool) TR
   return TRet(C.object_default_set_name_case_insensitive((*C.object_t)(this.handle), (C.bool_t)(name_case_insensitive)));
 }
 
+type TObjectFifoPopEvent struct {
+  TEvent
+}
+
+func (this TObjectFifoPopEvent) GetNr() uint32 {
+  return (uint32)((*C.object_fifo_pop_event_t)(unsafe.Pointer(this.handle)).nr);
+}
+
+type TObjectFifoPopTailEvent struct {
+  TEvent
+}
+
+func (this TObjectFifoPopTailEvent) GetNr() uint32 {
+  return (uint32)((*C.object_fifo_pop_tail_event_t)(unsafe.Pointer(this.handle)).nr);
+}
+
+type TObjectFifoPushEvent struct {
+  TEvent
+}
+
+func (this TObjectFifoPushEvent) GetNr() uint32 {
+  return (uint32)((*C.object_fifo_push_event_t)(unsafe.Pointer(this.handle)).nr);
+}
+
+func (this TObjectFifoPushEvent) GetData() unsafe.Pointer {
+  return (unsafe.Pointer)((*C.object_fifo_push_event_t)(unsafe.Pointer(this.handle)).data);
+}
+
+type TObjectFifoPushHeadEvent struct {
+  TEvent
+}
+
+func (this TObjectFifoPushHeadEvent) GetNr() uint32 {
+  return (uint32)((*C.object_fifo_push_head_event_t)(unsafe.Pointer(this.handle)).nr);
+}
+
+func (this TObjectFifoPushHeadEvent) GetData() unsafe.Pointer {
+  return (unsafe.Pointer)((*C.object_fifo_push_head_event_t)(unsafe.Pointer(this.handle)).data);
+}
+
+type TObjectFifoSetEvent struct {
+  TEvent
+}
+
+func (this TObjectFifoSetEvent) GetIndex() uint32 {
+  return (uint32)((*C.object_fifo_set_event_t)(unsafe.Pointer(this.handle)).index);
+}
+
+func (this TObjectFifoSetEvent) GetNr() uint32 {
+  return (uint32)((*C.object_fifo_set_event_t)(unsafe.Pointer(this.handle)).nr);
+}
+
+func (this TObjectFifoSetEvent) GetData() unsafe.Pointer {
+  return (unsafe.Pointer)((*C.object_fifo_set_event_t)(unsafe.Pointer(this.handle)).data);
+}
+
+type TObjectFifoValueChangeEvent struct {
+  TEvent
+}
+
+func TObjectFifoValueChangeEventObjectFifoSetEventCast(event TEvent) TObjectFifoValueChangeEvent {
+  retObj := TObjectFifoValueChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.object_fifo_set_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func TObjectFifoValueChangeEventObjectFifoPushEventCast(event TEvent) TObjectFifoValueChangeEvent {
+  retObj := TObjectFifoValueChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.object_fifo_push_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func TObjectFifoValueChangeEventObjectFifoPushHeadEventCast(event TEvent) TObjectFifoValueChangeEvent {
+  retObj := TObjectFifoValueChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.object_fifo_push_head_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func TObjectFifoValueChangeEventObjectFifoPopEventCast(event TEvent) TObjectFifoValueChangeEvent {
+  retObj := TObjectFifoValueChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.object_fifo_pop_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func TObjectFifoValueChangeEventObjectFifoPopTailEventCast(event TEvent) TObjectFifoValueChangeEvent {
+  retObj := TObjectFifoValueChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.object_fifo_pop_tail_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func TObjectFifoValueChangeEventCast(event TEvent) TObjectFifoValueChangeEvent {
+  retObj := TObjectFifoValueChangeEvent{}
+  retObj.handle = unsafe.Pointer(C.object_fifo_value_change_event_cast((*C.event_t)(event.handle)))
+  return retObj
+}
+
+func (this TObjectFifoValueChangeEvent) GetType() uint32 {
+  return (uint32)((*C.object_fifo_value_change_event_t)(unsafe.Pointer(this.handle))._type);
+}
+
 type TObjectHash struct {
   TObject
 }
@@ -4501,6 +4690,10 @@ func (this TObjectHash) SetKeepPropType(keep_prop_type bool) TRet {
   return TRet(C.object_hash_set_keep_prop_type((*C.object_t)(this.handle), (C.bool_t)(keep_prop_type)));
 }
 
+func (this TObjectHash) SetNameCaseInsensitive(name_case_insensitive bool) TRet {
+  return TRet(C.object_hash_set_name_case_insensitive((*C.object_t)(this.handle), (C.bool_t)(name_case_insensitive)));
+}
+
 func (this TObjectHash) SetKeepPropsOrder(keep_props_order bool) TRet {
   return TRet(C.object_hash_set_keep_props_order((*C.object_t)(this.handle), (C.bool_t)(keep_props_order)));
 }
@@ -4514,6 +4707,8 @@ const (
 type TObjectProp string
 const (
   OBJECT_PROP_SIZE string = C.OBJECT_PROP_SIZE
+  OBJECT_PROP_DISABLE_PATH string = C.OBJECT_PROP_DISABLE_PATH
+  OBJECT_PROP_KEEP_PROPS_ORDER string = C.OBJECT_PROP_KEEP_PROPS_ORDER
   OBJECT_PROP_CHECKED string = C.OBJECT_PROP_CHECKED
   OBJECT_PROP_SELECTED_INDEX string = C.OBJECT_PROP_SELECTED_INDEX
 )
@@ -4661,8 +4856,8 @@ func (this TPointerEvent) GetY() int {
   return (int)((*C.pointer_event_t)(unsafe.Pointer(this.handle)).y);
 }
 
-func (this TPointerEvent) GetButton() int {
-  return (int)((*C.pointer_event_t)(unsafe.Pointer(this.handle)).button);
+func (this TPointerEvent) GetButton() int32 {
+  return (int32)((*C.pointer_event_t)(unsafe.Pointer(this.handle)).button);
 }
 
 func (this TPointerEvent) GetPressed() bool {
@@ -5022,6 +5217,10 @@ func (this TRichText) SetYslidable(yslidable bool) TRet {
   return TRet(C.rich_text_set_yslidable((*C.widget_t)(this.handle), (C.bool_t)(yslidable)));
 }
 
+func (this TRichText) SetWordWrap(word_wrap bool) TRet {
+  return TRet(C.rich_text_set_word_wrap((*C.widget_t)(this.handle), (C.bool_t)(word_wrap)));
+}
+
 func TRichTextCast(widget TWidget) TRichText {
   retObj := TRichText{}
   retObj.handle = unsafe.Pointer(C.rich_text_cast((*C.widget_t)(widget.handle)))
@@ -5034,6 +5233,10 @@ func (this TRichText) GetLineGap() uint32 {
 
 func (this TRichText) GetYslidable() bool {
   return (bool)((*C.rich_text_t)(unsafe.Pointer(this.handle)).yslidable);
+}
+
+func (this TRichText) GetWordWrap() bool {
+  return (bool)((*C.rich_text_t)(unsafe.Pointer(this.handle)).word_wrap);
 }
 
 type TRichTextView struct {
@@ -5162,6 +5365,10 @@ func (this TScrollBar) SetScrollDelta(scroll_delta uint32) TRet {
   return TRet(C.scroll_bar_set_scroll_delta((*C.widget_t)(this.handle), (C.uint32_t)(scroll_delta)));
 }
 
+func (this TScrollBar) SetScrollRows(scroll_rows uint8) TRet {
+  return TRet(C.scroll_bar_set_scroll_rows((*C.widget_t)(this.handle), (C.uint8_t)(scroll_rows)));
+}
+
 func (this TScrollBar) GetVirtualSize() int32 {
   return (int32)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).virtual_size);
 }
@@ -5178,6 +5385,10 @@ func (this TScrollBar) GetScrollDelta() uint32 {
   return (uint32)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).scroll_delta);
 }
 
+func (this TScrollBar) GetScrollRows() uint8 {
+  return (uint8)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).scroll_rows);
+}
+
 func (this TScrollBar) GetAnimatable() bool {
   return (bool)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).animatable);
 }
@@ -5188,6 +5399,10 @@ func (this TScrollBar) GetAutoHide() bool {
 
 func (this TScrollBar) GetWheelScroll() bool {
   return (bool)((*C.scroll_bar_t)(unsafe.Pointer(this.handle)).wheel_scroll);
+}
+
+func (this TScrollBar) GetWheelModifierKey() string {
+  return C.GoString(&(*C.scroll_bar_t)(unsafe.Pointer(this.handle)).wheel_modifier_key[0]);
 }
 
 type TScrollView struct {
@@ -5260,6 +5475,22 @@ func (this TScrollView) ScrollTo(xoffset_end int32, yoffset_end int32, duration 
 
 func (this TScrollView) ScrollDeltaTo(xoffset_delta int32, yoffset_delta int32, duration int32) TRet {
   return TRet(C.scroll_view_scroll_delta_to((*C.widget_t)(this.handle), (C.int32_t)(xoffset_delta), (C.int32_t)(yoffset_delta), (C.int32_t)(duration)));
+}
+
+func (this TScrollView) GetUseVirtualW() bool {
+  return (bool)((*C.scroll_view_t)(unsafe.Pointer(this.handle)).use_virtual_w);
+}
+
+func (this TScrollView) GetUseWidgetW() bool {
+  return (bool)((*C.scroll_view_t)(unsafe.Pointer(this.handle)).use_widget_w);
+}
+
+func (this TScrollView) GetUseVirtualH() bool {
+  return (bool)((*C.scroll_view_t)(unsafe.Pointer(this.handle)).use_virtual_h);
+}
+
+func (this TScrollView) GetUseWidgetH() bool {
+  return (bool)((*C.scroll_view_t)(unsafe.Pointer(this.handle)).use_widget_h);
 }
 
 func (this TScrollView) GetVirtualW() int {
@@ -6490,6 +6721,10 @@ func TTimerModify(timer_id uint32, duration uint32) TRet {
   return TRet(C.timer_modify((C.uint32_t)(timer_id), (C.uint32_t)(duration)));
 }
 
+func TTimerModifyEx(timer_id uint32, duration uint32, reset_timer bool) TRet {
+  return TRet(C.timer_modify_ex((C.uint32_t)(timer_id), (C.uint32_t)(duration), (C.bool_t)(reset_timer)));
+}
+
 type TTimerInfo struct {
   TObject
 }
@@ -6544,6 +6779,13 @@ func (this TTimerWidget) GetDuration() uint32 {
   return (uint32)((*C.timer_widget_t)(unsafe.Pointer(this.handle)).duration);
 }
 
+type TTkLogLevel int
+const (
+  LOG_LEVEL_DEBUG TTkLogLevel = C.LOG_LEVEL_DEBUG
+  LOG_LEVEL_INFO TTkLogLevel = C.LOG_LEVEL_INFO
+  LOG_LEVEL_WARN TTkLogLevel = C.LOG_LEVEL_WARN
+  LOG_LEVEL_ERROR TTkLogLevel = C.LOG_LEVEL_ERROR
+)
 type TTouchEvent struct {
   TEvent
 }
@@ -6728,6 +6970,10 @@ func (this TValue) IsNull() bool {
 
 func (this TValue) Equal(other TValue) bool {
   return (bool)(C.value_equal((*C.value_t)(this.handle), (*C.value_t)(other.handle)));
+}
+
+func (this TValue) Compare(other TValue) int {
+  return (int)(C.value_compare((*C.value_t)(this.handle), (*C.value_t)(other.handle)));
 }
 
 func (this TValue) SetInt(value int32) TValue {
@@ -7335,6 +7581,20 @@ func (this TWidget) AnimateValueTo(value float64, duration uint32) TRet {
   return TRet(C.widget_animate_value_to((*C.widget_t)(this.handle), (C.float_t)(value), (C.uint32_t)(duration)));
 }
 
+func (this TWidget) AnimatePropFloatTo(name string, value float64, duration uint32) TRet {
+  aname := C.CString(name)
+  defer C.free(unsafe.Pointer(aname))
+  return TRet(C.widget_animate_prop_float_to((*C.widget_t)(this.handle), aname, (C.float_t)(value), (C.uint32_t)(duration)));
+}
+
+func (this TWidget) AnimatePositionTo(x int, y int, duration uint32) TRet {
+  return TRet(C.widget_animate_position_to((*C.widget_t)(this.handle), (C.xy_t)(x), (C.xy_t)(y), (C.uint32_t)(duration)));
+}
+
+func (this TWidget) AnimateSizeTo(w int, h int, duration uint32) TRet {
+  return TRet(C.widget_animate_size_to((*C.widget_t)(this.handle), (C.wh_t)(w), (C.wh_t)(h), (C.uint32_t)(duration)));
+}
+
 func (this TWidget) IsStyleExist(style_name string, state_name string) bool {
   astyle_name := C.CString(style_name)
   defer C.free(unsafe.Pointer(astyle_name))
@@ -7742,6 +8002,14 @@ func (this TWidget) IsAlwaysOnTop() bool {
   return (bool)(C.widget_is_always_on_top((*C.widget_t)(this.handle)));
 }
 
+func (this TWidget) IsSuspendDialog() bool {
+  return (bool)(C.widget_is_suspend_dialog((*C.widget_t)(this.handle)));
+}
+
+func (this TWidget) IsSuspendPopup() bool {
+  return (bool)(C.widget_is_suspend_popup((*C.widget_t)(this.handle)));
+}
+
 func (this TWidget) IsOpenedDialog() bool {
   return (bool)(C.widget_is_opened_dialog((*C.widget_t)(this.handle)));
 }
@@ -7800,6 +8068,12 @@ func (this TWidget) Destroy() TRet {
 
 func (this TWidget) DestroyAsync() TRet {
   return TRet(C.widget_destroy_async((*C.widget_t)(this.handle)));
+}
+
+func (this TWidget) Ref() TWidget {
+  retObj := TWidget{}
+  retObj.handle = unsafe.Pointer(C.widget_ref((*C.widget_t)(this.handle)))
+  return retObj
 }
 
 func (this TWidget) Unref() TRet {

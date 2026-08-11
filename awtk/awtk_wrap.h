@@ -1,4 +1,5 @@
 #include "awtk.h"
+#include "conf_io/conf_utils.h"
 
 extern int GoOnEvent(void* ctx, void* e);
 extern int GoReleasePointer(void* ctx);

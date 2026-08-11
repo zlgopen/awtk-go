@@ -4,6 +4,7 @@ package awtk
 #include <awtk.h>
 #include <tkc/rlog.h>
 #include <conf_io/app_conf.h>
+#include <conf_io/conf_utils.h>
 #include "../res/assets.inc"
 */
 import "C"
