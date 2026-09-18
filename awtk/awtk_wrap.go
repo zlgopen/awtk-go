@@ -1,6 +1,10 @@
 package awtk
 
 /*
+#cgo CFLAGS: -DWITH_FS_RES=1 -DAWTK_GO=1 -DHAS_STDIO=1 -I${SRCDIR}/../../awtk/src -I${SRCDIR}/../../awtk/3rd -I${SRCDIR}/../../awtk/src/ext_widgets
+#cgo LDFLAGS: -L${SRCDIR}/../../awtk/bin -lawtk
+#cgo linux LDFLAGS: -Wl,-rpath,${SRCDIR}/../../awtk/bin
+#cgo darwin LDFLAGS: -Wl,-rpath,${SRCDIR}/../../awtk/bin
 #include "./awtk_wrap.h"
 */
 import "C"

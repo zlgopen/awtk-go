@@ -1,6 +1,10 @@
 package awtk
 
 /*
+#cgo CFLAGS: -DWITH_FS_RES=1 -DAWTK_GO=1 -DHAS_STDIO=1 -I${SRCDIR}/../../awtk/src -I${SRCDIR}/../../awtk/3rd -I${SRCDIR}/../../awtk/src/ext_widgets
+#cgo LDFLAGS: -L${SRCDIR}/../../awtk/bin -lawtk
+#cgo linux LDFLAGS: -Wl,-rpath,${SRCDIR}/../../awtk/bin
+#cgo darwin LDFLAGS: -Wl,-rpath,${SRCDIR}/../../awtk/bin
 #include <awtk.h>
 #include <tkc/rlog.h>
 #include <conf_io/app_conf.h>
@@ -224,16 +228,6 @@ func (this TAssetsManager) Unref(info TAssetInfo) TRet {
   return TRet(C.assets_manager_unref((*C.assets_manager_t)(this.handle), (*C.asset_info_t)(info.handle)));
 }
 
-type TBidiType int
-const (
-  BIDI_TYPE_AUTO TBidiType = C.BIDI_TYPE_AUTO
-  BIDI_TYPE_LTR TBidiType = C.BIDI_TYPE_LTR
-  BIDI_TYPE_RTL TBidiType = C.BIDI_TYPE_RTL
-  BIDI_TYPE_LRO TBidiType = C.BIDI_TYPE_LRO
-  BIDI_TYPE_RLO TBidiType = C.BIDI_TYPE_RLO
-  BIDI_TYPE_WLTR TBidiType = C.BIDI_TYPE_WLTR
-  BIDI_TYPE_WRTL TBidiType = C.BIDI_TYPE_WRTL
-)
 type TBitmap struct {
   handle unsafe.Pointer
 }
@@ -911,7 +905,7 @@ func (this TComboBox) CountOptions() int32 {
 }
 
 func (this TComboBox) SetSelectedIndex(index uint32) TRet {
-  return TRet(C.combo_box_set_selected_index((*C.widget_t)(this.handle), (C.uint32_t)(index)));
+  return TRet(C.combo_box_set_selected_index((*C.widget_t)(this.handle), (C.int32_t)(index)));
 }
 
 func (this TComboBox) SetSelectedIndexByText(text string) TRet {
@@ -1624,6 +1618,10 @@ func (this TEdit) SetFocusNextWhenEnter(focus_next_when_enter bool) TRet {
   return TRet(C.edit_set_focus_next_when_enter((*C.widget_t)(this.handle), (C.bool_t)(focus_next_when_enter)));
 }
 
+func (this TEdit) SetScrollToBeginOnBlur(scroll_to_begin_on_blur bool) TRet {
+  return TRet(C.edit_set_scroll_to_begin_on_blur((*C.widget_t)(this.handle), (C.bool_t)(scroll_to_begin_on_blur)));
+}
+
 func (this TEdit) GetTips() string {
   return C.GoString((*C.edit_t)(unsafe.Pointer(this.handle)).tips);
 }
@@ -1690,6 +1688,10 @@ func (this TEdit) GetCancelable() bool {
 
 func (this TEdit) GetFocusNextWhenEnter() bool {
   return (bool)((*C.edit_t)(unsafe.Pointer(this.handle)).focus_next_when_enter);
+}
+
+func (this TEdit) GetScrollToBeginOnBlur() bool {
+  return (bool)((*C.edit_t)(unsafe.Pointer(this.handle)).scroll_to_begin_on_blur);
 }
 
 type TEditEx struct {
@@ -2191,6 +2193,16 @@ func (this TFileChooser) IsAborted() bool {
   return (bool)(C.file_chooser_is_aborted((*C.file_chooser_t)(this.handle)));
 }
 
+type TFontBidiType int
+const (
+  FONT_BIDI_TYPE_AUTO TFontBidiType = C.FONT_BIDI_TYPE_AUTO
+  FONT_BIDI_TYPE_LTR TFontBidiType = C.FONT_BIDI_TYPE_LTR
+  FONT_BIDI_TYPE_RTL TFontBidiType = C.FONT_BIDI_TYPE_RTL
+  FONT_BIDI_TYPE_LRO TFontBidiType = C.FONT_BIDI_TYPE_LRO
+  FONT_BIDI_TYPE_RLO TFontBidiType = C.FONT_BIDI_TYPE_RLO
+  FONT_BIDI_TYPE_WLTR TFontBidiType = C.FONT_BIDI_TYPE_WLTR
+  FONT_BIDI_TYPE_WRTL TFontBidiType = C.FONT_BIDI_TYPE_WRTL
+)
 type TFontManager struct {
   TEmitter
 }
@@ -5877,6 +5889,10 @@ func (this TSlideView) GetAnimatingTime() uint32 {
   return (uint32)((*C.slide_view_t)(unsafe.Pointer(this.handle)).animating_time);
 }
 
+func (this TSlideView) GetActive() uint32 {
+  return (uint32)((*C.slide_view_t)(unsafe.Pointer(this.handle)).active);
+}
+
 type TSlider struct {
   TWidget
 }
@@ -7229,6 +7245,10 @@ func (this TVgcanvas) FillText(text string, x float64, y float64, max_width floa
   return TRet(C.vgcanvas_fill_text((*C.vgcanvas_t)(this.handle), atext, (C.float_t)(x), (C.float_t)(y), (C.float_t)(max_width)));
 }
 
+func (this TVgcanvas) FillTextByGlyphs(glyphs unsafe.Pointer, start uint32, len uint32, x int, y int, max_width float64) TRet {
+  return TRet(C.vgcanvas_fill_text_by_glyphs((*C.vgcanvas_t)(this.handle), (*C.glyphs_t)(glyphs), (C.uint32_t)(start), (C.uint32_t)(len), (C.float_t)(x), (C.float_t)(y), (C.float_t)(max_width)));
+}
+
 func (this TVgcanvas) MeasureText(text string) float64 {
   atext := C.CString(text)
   defer C.free(unsafe.Pointer(atext))
@@ -8293,6 +8313,7 @@ const (
   WIDGET_PROP_LINE_HEIGHT string = C.WIDGET_PROP_LINE_HEIGHT
   WIDGET_PROP_DIRTY_RECT_TOLERANCE string = C.WIDGET_PROP_DIRTY_RECT_TOLERANCE
   WIDGET_PROP_BIDI string = C.WIDGET_PROP_BIDI
+  WIDGET_PROP_SHAPING string = C.WIDGET_PROP_SHAPING
   WIDGET_PROP_CANVAS string = C.WIDGET_PROP_CANVAS
   WIDGET_PROP_LOCALIZE_OPTIONS string = C.WIDGET_PROP_LOCALIZE_OPTIONS
   WIDGET_PROP_NATIVE_WINDOW string = C.WIDGET_PROP_NATIVE_WINDOW

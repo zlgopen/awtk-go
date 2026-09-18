@@ -1,22 +1,23 @@
 <window anim_hint="htranslate">
   <list_view x="0"  y="30" w="100%" h="-80" item_height="60">
-    <scroll_view name="view" x="0"  y="0" w="100%" h="100%">
+    <scroll_view name="view" x="0"  y="0" w="100%" h="100%" slide_limit_ratio="0.5">
       <list_item style="odd" children_layout="default(rows=1,cols=0)">
         <image draw_type="icon" w="30" image="earth"/>
         <label w="-30" text="1.Hello AWTK !">
-          <switch x="r:10" y="m" w="60" h="20"/>
+          <button x="r" y="m" w="100" h="30" 
+            name="open:dialog1" style="round" enable_long_press="true" text="Long Press"/>
         </label>
       </list_item>
       <list_item style="even" children_layout="default(rows=1,cols=0)">
         <image draw_type="icon" w="30" image="earth"/>
         <label w="-30" text="2.Hello AWTK !">
-          <switch x="r:10" y="m" w="60" h="20"/>
+          <switch x="r" y="m" w="60" h="20"/>
         </label>
       </list_item>
       <list_item style="odd" children_layout="default(rows=1,cols=0)">
         <image draw_type="icon" w="30" image="earth"/>
         <label w="-30" text="3.Hello AWTK !">
-          <switch x="r:10" y="m" w="60" h="20"/>
+          <switch x="r" y="m" w="60" h="20"/>
         </label>
       </list_item>
       <list_item style="even" children_layout="default(rows=1,cols=0)">
